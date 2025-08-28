@@ -1,0 +1,20 @@
+categoria,item,descricao,preco,vegetariano,sinonimos
+Burgers,Cheeseburger,Hambúrguer bovino com queijo,18.9,nao,cheese|x-burguer|xb
+Burgers,X-Salada,"Hambúrguer bovino com queijo, alface e tomate",20.9,nao,x-salada|xsalada
+Burgers,Bacon Burger,Hambúrguer bovino com bacon e queijo,24.9,nao,x-bacon|bacon
+Burgers,Duplo Burger,Dois hambúrgueres bovinos com queijo,28.9,nao,duplo|double
+Burgers,Vegetariano,Hambúrguer de grão-de-bico com salada,22.0,sim,veg|veggie|grão-de-bico
+Burgers,Frango Crispy,"Peito de frango empanado, maionese e salada",23.9,nao,crispy chicken|frango
+Burgers,Cheddar Melt,Hambúrguer bovino com cheddar cremoso e cebola,25.9,nao,cheddar
+Burgers,Vegano Cogumelos,Burger vegetal com cogumelos salteados,26.5,sim,vegano|plant-based|cogumelos
+Porções,Batata Frita P,Porção pequena de batata frita crocante,12.0,sim,batata|fritas pequena
+Porções,Batata Frita G,Porção grande de batata frita crocante,18.0,sim,batata grande|fritas grande
+Porções,Onion Rings,Anéis de cebola empanados,16.0,sim,cebola|anéis
+Porções,Nuggets 8un,Nuggets de frango (8 unidades),18.0,nao,nuggets|frango nuggets
+Porções,Molho Extra,"Porção de molho (barbecue, maionese, ketchup)",4.0,sim,molho|extra
+Bebidas,Coca-Cola Lata,Refrigerante lata 350ml,6.0,nao,coca|coca-cola
+Bebidas,Guaraná Lata,Refrigerante lata 350ml,6.0,nao,guaraná|guarana
+Bebidas,Água sem gás,Água mineral 500ml,4.5,sim,agua|água
+Bebidas,Suco Laranja,Suco natural 300ml,9.9,sim,suco|laranja
+Sobremesas,Brownie,Brownie de chocolate,12.9,nao,brownie
+Sobremesas,Sorvete,Bola de sorvete (sabores do dia),10.0,sim,gelado|ice cream|sorvete

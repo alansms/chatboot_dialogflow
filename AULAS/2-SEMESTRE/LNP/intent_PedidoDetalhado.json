@@ -1,0 +1,29 @@
+[
+  {
+    "displayName": "PedidoDetalhado",
+    "trainingPhrases": [
+      "Quero um hambúrguer @HamburguerTipo:tipo @PontoCarne:ponto com @BebidaTipo:bebida",
+      "Me vê um @HamburguerTipo:tipo com @BebidaTipo:bebida, ao ponto",
+      "Quero pedir um @HamburguerTipo:tipo bem passado e um @BebidaTipo:bebida",
+      "Me dá um @HamburguerTipo:tipo @PontoCarne:ponto e @BebidaTipo:bebida"
+    ],
+    "parameters": [
+      {
+        "displayName": "tipo",
+        "entityTypeDisplayName": "@HamburguerTipo",
+        "mandatory": true
+      },
+      {
+        "displayName": "ponto",
+        "entityTypeDisplayName": "@PontoCarne",
+        "mandatory": true
+      },
+      {
+        "displayName": "bebida",
+        "entityTypeDisplayName": "@BebidaTipo",
+        "mandatory": true
+      }
+    ],
+    "response": "Certo! Um hambúrguer $tipo $ponto com $bebida. Deseja confirmar o pedido?"
+  }
+]

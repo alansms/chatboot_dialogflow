@@ -1,0 +1,100 @@
+[
+  {
+    "displayName": "HamburguerTipo",
+    "kind": "KIND_MAP",
+    "autoExpansionMode": "AUTO_EXPANSION_MODE_DEFAULT",
+    "entities": [
+      {
+        "value": "artesanal",
+        "synonyms": [
+          "artesanal",
+          "hambúrguer artesanal"
+        ]
+      },
+      {
+        "value": "duplo",
+        "synonyms": [
+          "duplo",
+          "hambúrguer duplo"
+        ]
+      },
+      {
+        "value": "vegetariano",
+        "synonyms": [
+          "vegetariano",
+          "vegano",
+          "sem carne"
+        ]
+      },
+      {
+        "value": "frango",
+        "synonyms": [
+          "frango",
+          "hambúrguer de frango"
+        ]
+      }
+    ]
+  },
+  {
+    "displayName": "BebidaTipo",
+    "kind": "KIND_MAP",
+    "autoExpansionMode": "AUTO_EXPANSION_MODE_DEFAULT",
+    "entities": [
+      {
+        "value": "coca",
+        "synonyms": [
+          "coca",
+          "coca-cola"
+        ]
+      },
+      {
+        "value": "guaraná",
+        "synonyms": [
+          "guaraná"
+        ]
+      },
+      {
+        "value": "suco",
+        "synonyms": [
+          "suco",
+          "suco natural"
+        ]
+      },
+      {
+        "value": "água",
+        "synonyms": [
+          "água",
+          "água mineral"
+        ]
+      }
+    ]
+  },
+  {
+    "displayName": "PontoCarne",
+    "kind": "KIND_MAP",
+    "autoExpansionMode": "AUTO_EXPANSION_MODE_DEFAULT",
+    "entities": [
+      {
+        "value": "mal passado",
+        "synonyms": [
+          "mal passado",
+          "sangrando"
+        ]
+      },
+      {
+        "value": "ao ponto",
+        "synonyms": [
+          "ao ponto",
+          "ponto"
+        ]
+      },
+      {
+        "value": "bem passado",
+        "synonyms": [
+          "bem passado",
+          "bem passado mesmo"
+        ]
+      }
+    ]
+  }
+]

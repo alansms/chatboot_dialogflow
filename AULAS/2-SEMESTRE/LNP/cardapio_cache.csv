@@ -1,0 +1,7 @@
+categoria,item,descricao,preco,vegetariano,sinonimos
+Burgers,Cheeseburger,Hambúrguer com queijo,18.9,nao,cheese|x-burguer
+Burgers,Vegetariano,Hambúrguer de grão de bico,20.0,sim,veg|veggie
+Burgers,Duplo,Hambúrguer duplo com queijo,25.0,nao,duplo|x-duplo
+Bebidas,Coca-Cola,Refrigerante lata,6.0,nao,coca|coca-cola
+Bebidas,Suco,Suco natural de laranja,7.5,sim,suco laranja|laranja
+Porções,Batata Frita,Batata frita crocante,12.0,sim,batata|fritas

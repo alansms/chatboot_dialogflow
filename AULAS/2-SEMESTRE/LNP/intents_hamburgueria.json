@@ -1,0 +1,129 @@
+[
+  {
+    "displayName": "BoasVindas",
+    "trainingPhrases": [
+      "Oi",
+      "Olá",
+      "Boa noite",
+      "Bom dia",
+      "E aí",
+      "Oi, tudo bem?",
+      "Oi bot",
+      "Saudações",
+      "Oi, gostaria de pedir",
+      "Olá, tudo bem?",
+      "Hello",
+      "Hi"
+    ],
+    "response": "Olá! Bem-vindo à nossa hamburgueria! Como posso te ajudar hoje?"
+  },
+  {
+    "displayName": "Cardapio",
+    "trainingPhrases": [
+      "Quero ver o cardápio",
+      "O que vocês têm?",
+      "Mostre o menu",
+      "Cardápio",
+      "Quais opções de hambúrguer?",
+      "Quais bebidas vocês têm?",
+      "Me mostre o cardápio",
+      "Menu"
+    ],
+    "response": "Temos hambúrgueres artesanais, porções e bebidas geladas. Deseja ver as opções?"
+  },
+  {
+    "displayName": "MostrarItens",
+    "trainingPhrases": [
+      "Mostre os itens",
+      "Quais são os hambúrgueres?",
+      "Me mostre os produtos",
+      "Quais itens vocês têm?",
+      "Lista de produtos",
+      "Ver todos os itens",
+      "Mostrar cardápio completo",
+      "Quais são as opções?",
+      "Ver opções",
+      "Mostrar itens",
+      "Quero ver as opções detalhadas",
+      "Listar produtos",
+      "Todos os itens"
+    ],
+    "response": "Aqui estão nossos itens disponíveis:"
+  },
+  {
+    "displayName": "HorarioFuncionamento",
+    "trainingPhrases": [
+      "Qual o horário?",
+      "Vocês abrem que horas?",
+      "Horário de funcionamento",
+      "Quando estão abertos?",
+      "Qual o horário de funcionamento?",
+      "Que horas fecha?"
+    ],
+    "response": "Funcionamos de terça a domingo, das 18h às 23h."
+  },
+  {
+    "displayName": "Endereco",
+    "trainingPhrases": [
+      "Onde vocês ficam?",
+      "Qual o endereço?",
+      "Localização da hamburgueria",
+      "Como chego aí?",
+      "Endereço",
+      "Onde fica a loja?"
+    ],
+    "response": "Estamos na Rua das Delícias, nº 123 – Centro."
+  },
+  {
+    "displayName": "FazerPedido",
+    "trainingPhrases": [
+      "Quero fazer um pedido",
+      "Gostaria de pedir",
+      "Quero um hambúrguer",
+      "Quero pedir",
+      "Quero pedir um combo",
+      "Quero pedir uma bebida"
+    ],
+    "response": "Claro! Para pedidos online, acesse nosso site ou envie sua escolha por aqui mesmo."
+  },
+  {
+    "displayName": "ConfirmarPedido",
+    "trainingPhrases": [
+      "Sim",
+      "Quero confirmar",
+      "Pode confirmar",
+      "Pode fechar",
+      "Confirmar pedido",
+      "Quero esse",
+      "Pode ser",
+      "Ok, pode confirmar"
+    ],
+    "response": "Pedido confirmado! Obrigado! Se quiser pedir mais alguma coisa, é só avisar."
+  },
+  {
+    "displayName": "NegarPedido",
+    "trainingPhrases": [
+      "Não",
+      "Cancelar",
+      "Não quero",
+      "Desistir",
+      "Não quero mais",
+      "Pode cancelar",
+      "Não, obrigado"
+    ],
+    "response": "Pedido cancelado. Se precisar de algo, estou à disposição!"
+  },
+  {
+    "displayName": "Despedida",
+    "trainingPhrases": [
+      "Tchau",
+      "Valeu",
+      "Até mais",
+      "Obrigado",
+      "Até logo",
+      "Boa noite",
+      "Até a próxima"
+    ],
+    "response": "Obrigado pela visita! Esperamos vê-lo em breve! 🍔"
+  }
+]
