@@ -320,14 +320,24 @@ class DialogflowBot:
                 credentials = service_account.Credentials.from_service_account_info(credentials_info)
                 self.session_client = dialogflow.SessionsClient(credentials=credentials)
                 self.dialogflow_enabled = True
+                st.success("✅ Conectado ao Dialogflow via Streamlit Secrets")
             elif os.getenv('GOOGLE_APPLICATION_CREDENTIALS'):
                 # Para ambiente local - credenciais via arquivo
                 self.session_client = dialogflow.SessionsClient()
                 self.dialogflow_enabled = True
+                st.success("✅ Conectado ao Dialogflow via variável de ambiente")
             else:
-                st.warning("⚠️ Credenciais do Dialogflow não configuradas. Usando processamento local.")
-                self.dialogflow_enabled = False
-                return
+                # Tenta encontrar o arquivo de credenciais no projeto
+                credentials_path = "AULAS/2-SEMESTRE/LNP/fiap-boot-a239f7750ffc.json"
+                if os.path.exists(credentials_path):
+                    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+                    self.session_client = dialogflow.SessionsClient()
+                    self.dialogflow_enabled = True
+                    st.success("✅ Conectado ao Dialogflow usando credenciais do projeto")
+                else:
+                    st.warning("⚠️ Credenciais do Dialogflow não encontradas. Usando processamento local.")
+                    self.dialogflow_enabled = False
+                    return
 
             self.session_path = self.session_client.session_path(project_id, session_id)
 
