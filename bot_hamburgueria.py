@@ -313,15 +313,22 @@ class DialogflowBot:
         # Tenta configurar as credenciais do Google Cloud
         try:
             # Verifica se existe um arquivo de credenciais como variável de ambiente no Streamlit
-            if 'GOOGLE_APPLICATION_CREDENTIALS_JSON' in st.secrets:
-                # Para Streamlit Cloud - credenciais via secrets
-                credentials_info = json.loads(st.secrets['GOOGLE_APPLICATION_CREDENTIALS_JSON'])
-                from google.oauth2 import service_account
-                credentials = service_account.Credentials.from_service_account_info(credentials_info)
-                self.session_client = dialogflow.SessionsClient(credentials=credentials)
-                self.dialogflow_enabled = True
-                st.success("✅ Conectado ao Dialogflow via Streamlit Secrets")
-            elif os.getenv('GOOGLE_APPLICATION_CREDENTIALS'):
+            try:
+                if hasattr(st, 'secrets') and 'GOOGLE_APPLICATION_CREDENTIALS_JSON' in st.secrets:
+                    # Para Streamlit Cloud - credenciais via secrets
+                    credentials_info = json.loads(st.secrets['GOOGLE_APPLICATION_CREDENTIALS_JSON'])
+                    from google.oauth2 import service_account
+                    credentials = service_account.Credentials.from_service_account_info(credentials_info)
+                    self.session_client = dialogflow.SessionsClient(credentials=credentials)
+                    self.dialogflow_enabled = True
+                    st.success("✅ Conectado ao Dialogflow via Streamlit Secrets")
+                    self.session_path = self.session_client.session_path(project_id, session_id)
+                    return
+            except Exception:
+                # Ignora erros de secrets e continua para outros métodos
+                pass
+
+            if os.getenv('GOOGLE_APPLICATION_CREDENTIALS'):
                 # Para ambiente local - credenciais via arquivo
                 self.session_client = dialogflow.SessionsClient()
                 self.dialogflow_enabled = True
@@ -373,8 +380,12 @@ class DialogflowBot:
 
 # Inicializa o bot do Dialogflow
 if 'dialogflow_bot' not in st.session_state:
-    # Configuração do projeto (ajuste conforme necessário)
-    PROJECT_ID = st.secrets.get('DIALOGFLOW_PROJECT_ID', 'fiap-boot')  # ou use seu project ID
+    # Configuração do projeto - tenta usar secrets, se não conseguir usa valor padrão
+    try:
+        PROJECT_ID = st.secrets.get('DIALOGFLOW_PROJECT_ID', 'fiap-boot')
+    except:
+        PROJECT_ID = 'fiap-boot'  # Valor padrão quando não há secrets configurados
+
     st.session_state.dialogflow_bot = DialogflowBot(
         project_id=PROJECT_ID,
         session_id=st.session_state.session_id
