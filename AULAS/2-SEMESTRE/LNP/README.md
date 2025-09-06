@@ -1,92 +1,322 @@
-# Plataforma RPA-BOT Hamburgueria
+# 🌐 FiapNet - Sistema de Suporte de Internet
 
-## Descrição Geral
+## 📋 Descrição
 
-Este projeto é uma plataforma completa de chatbot para hamburgueria, integrando Dialogflow, interface web (Streamlit), integração com Telegram e automação de setup do agente Dialogflow (intents e entidades). O sistema permite upload e gerenciamento dinâmico de cardápio, atendimento automatizado via chat e múltiplos canais, além de scripts para facilitar a configuração do agente conversacional.
+Sistema completo de chatbot para suporte de internet que utiliza **Google Cloud Dialogflow** como engine principal de NLP, integrado com **Telegram** e interface web profissional em **Flask**. O sistema oferece funcionalidades completas de atendimento, abertura de chamados, consulta de status e gerenciamento de intents/entidades.
 
-## Funcionalidades
+## 🚀 Funcionalidades
 
-- **Upload e Gerenciamento de Cardápio**: Upload de arquivos CSV/XLSX com o cardápio, visualização e persistência automática.
-- **Chatbot Inteligente**: Atendimento automatizado via Dialogflow, com intents customizadas para pedidos, consulta de cardápio, preços, detalhes, opções vegetarianas, confirmação de pedidos e mais.
-- **Interface Web (Streamlit)**: Plataforma centralizada para upload/administração, chat com o bot e visualização do cardápio.
-- **Webhook Telegram**: Integração direta com Telegram, permitindo atendimento via app de mensagens.
-- **Entidades Dinâmicas**: Atualização automática das entidades do Dialogflow conforme o cardápio carregado.
-- **Scripts de Automação**: Scripts Python para importar intents e entidades customizadas para o Dialogflow.
+### **Interface Web Profissional**
+- ✅ **Chat interativo** com interface moderna
+- ✅ **Dashboard administrativo** com estatísticas
+- ✅ **Gerenciador de Intents** - Criar, editar, visualizar intents
+- ✅ **Gerenciador de Entidades** - Gerenciar entidades do Dialogflow
+- ✅ **Sistema de status** de chamados
+- ✅ **FAQ integrado** com busca
 
-## Estrutura dos Principais Arquivos
+### **Integração Telegram**
+- ✅ **Bot Telegram** (@chat_fiap_bot) totalmente funcional
+- ✅ **Webhook configurado** para recebimento de mensagens
+- ✅ **Processamento automático** via Dialogflow
+- ✅ **Respostas personalizadas** para cada canal
 
-- `app.py`: Backend Flask para upload, visualização e manipulação do cardápio, integração com Dialogflow (webhook fulfillment), gerenciamento de carrinho de compras por sessão.
-- `streamlit_app.py`: Interface web em Streamlit para chat, upload/administração e visualização do cardápio.
-- `webhook_telegram.py`: Webhook Flask para integração Telegram → Dialogflow → Telegram.
-- `create_intent.py`, `import_entities.py`, `import_intents.py`, `import_param_intent.py`: Scripts para automação do setup do agente Dialogflow.
-- `entities_hamburgueria.json`, `intents_hamburgueria.json`, `intent_PedidoDetalhado.json`: Modelos de entidades e intents customizadas para importação no Dialogflow.
-- `cardapio_teste.csv`: Exemplo de cardápio para testes.
+### **Sistema Dialogflow**
+- ✅ **15 Intents** configuradas para suporte de internet
+- ✅ **7 Entidades** personalizadas
+- ✅ **5 Fluxos principais** conforme requisitos da atividade
+- ✅ **Contextos e parâmetros** configurados
+- ✅ **Fallback inteligente** para casos não cobertos
 
-## Como Executar
+### **Fluxos de Atendimento**
+1. **Saudação e Identificação** - Captura nome e telefone
+2. **Abertura de Chamados** - Processo completo de abertura
+3. **Consulta de Status** - Verificação de chamados existentes
+4. **FAQ e Informações** - Planos, preços, horários
+5. **Encaminhamento Humano** - Transferência para atendente
 
-### 1. Instale as dependências
+## ⚙️ Configuração
+
+### **1. Dependências**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Inicie o backend Flask
+### **2. Configuração do Google Cloud Dialogflow**
+
+#### **Para Desenvolvimento Local:**
+
+1. Crie um projeto no Google Cloud Console
+2. Ative a API do Dialogflow
+3. Crie uma conta de serviço e baixe o arquivo JSON de credenciais
+4. Configure a variável de ambiente:
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="caminho/para/suas/credenciais.json"
+```
+
+#### **Para Produção (VPS):**
+
+1. Configure as variáveis de ambiente no servidor
+2. Coloque o arquivo de credenciais em local seguro
+3. Configure as variáveis do Telegram e webhook
+
+### **3. Configuração do Telegram**
+
+1. Crie um bot com @BotFather no Telegram
+2. Configure o token:
+```bash
+export TELEGRAM_TOKEN="seu_token_do_bot"
+```
+
+3. Configure o webhook (para produção):
+```bash
+export WEBHOOK_URL="https://seu-dominio.com/telegram"
+```
+
+## 🔧 Como Usar
+
+### **Execução Local:**
 
 ```bash
-python app.py
+# Iniciar aplicação
+python app_web.py
+
+# Acessar interface web
+http://localhost:5023
+
+# Gerenciar intents
+http://localhost:5023/intent-manager
+
+# Gerenciar entidades
+http://localhost:5023/entity-manager
 ```
 
-### 3. Inicie a interface Streamlit
+### **Configuração do Telegram:**
 
 ```bash
-streamlit run streamlit_app.py
+# Ver informações do bot
+python telegram_setup.py info
+
+# Configurar webhook
+python telegram_setup.py setup
+
+# Testar webhook
+python telegram_setup.py test
 ```
 
-Acesse a interface web em `http://localhost:8501`.
-
-### 4. (Opcional) Inicie o webhook do Telegram
+### **Deploy em VPS:**
 
 ```bash
-python webhook_telegram.py
+# Executar script de deploy
+chmod +x deploy.sh
+./deploy.sh
 ```
 
-### 5. (Opcional) Importe intents e entidades para o Dialogflow
+## 📁 Estrutura do Projeto
 
+```
+├── app_web.py                    # Aplicação principal Flask
+├── requirements.txt              # Dependências Python
+├── deploy.sh                    # Script de deploy para VPS
+├── telegram_setup.py            # Configuração do Telegram
+├── test_telegram_local.py       # Testes locais
+├── start_with_ngrok.sh          # Script para desenvolvimento
+├── config_example.env           # Exemplo de configuração
+├── templates/                   # Templates HTML
+│   ├── base.html
+│   ├── index.html
+│   ├── chat.html
+│   ├── status.html
+│   ├── faq.html
+│   ├── admin.html
+│   ├── intent_manager.html
+│   └── entity_manager.html
+├── static/                      # Arquivos estáticos
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── images/
+├── fiap-boot-a239f7750ffc.json  # Credenciais Dialogflow
+└── documentação/
+    ├── GERENCIADOR_INTENTS.md
+    ├── INTEGRACAO_TELEGRAM.md
+    ├── CONFIGURACAO_RAPIDA.md
+    └── CONFIGURACAO_FINAL.md
+```
+
+## 🛠️ Arquitetura
+
+### **Fluxo de Processamento:**
+
+1. **Input do usuário** → Interface Web ou Telegram
+2. **Dialogflow API** → Detecção de intenção
+3. **Processamento de parâmetros** → Extração de dados
+4. **Geração de resposta** → Baseada na intenção
+5. **Envio da resposta** → Canal de origem
+
+### **APIs Disponíveis:**
+
+- `GET /` - Interface principal
+- `GET /chat` - Interface de chat
+- `GET /intent-manager` - Gerenciador de intents
+- `GET /entity-manager` - Gerenciador de entidades
+- `GET /admin` - Dashboard administrativo
+- `POST /telegram` - Webhook do Telegram
+- `POST /dialogflow` - Webhook do Dialogflow
+- `GET /api/intents` - API de intents
+- `GET /api/entities` - API de entidades
+
+## 📊 Intents Configuradas
+
+### **Saudação e Identificação:**
+- `Saudacao_Identificacao` - Saudação inicial
+- `Capturar_Nome` - Captura do nome do cliente
+- `Capturar_Telefone` - Captura do telefone
+
+### **Abertura de Chamados:**
+- `Abrir_Chamado` - Início do processo
+- `Definir_Tipo_Problema` - Tipo do problema
+- `Definir_Urgencia` - Nível de urgência
+- `Finalizar_Chamado` - Confirmação e fechamento
+
+### **Consulta de Status:**
+- `Consultar_Status` - Consulta de chamados
+- `Buscar_Chamado` - Busca específica
+
+### **FAQ e Informações:**
+- `FAQ_Informacoes` - Informações gerais
+- `Horario_Funcionamento` - Horários de atendimento
+- `Planos_Precos` - Planos e preços
+- `Solucoes_Rapidas` - Soluções rápidas
+
+### **Suporte e Encerramento:**
+- `Encaminhar_Humano` - Transferência para atendente
+- `Encerramento` - Encerramento de atendimento
+
+## 🏷️ Entidades Configuradas
+
+- `TipoProblema` - Tipos de problemas técnicos
+- `UrgenciaChamado` - Níveis de urgência
+- `StatusChamado` - Status de chamados
+- `PlanoInternet` - Planos de internet
+
+## 🚀 Deploy em VPS
+
+### **Requisitos do Servidor:**
+- Ubuntu 20.04+ ou similar
+- Python 3.8+
+- Nginx
+- SSL Certificate (Let's Encrypt)
+
+### **Processo de Deploy:**
+
+1. **Clone o repositório:**
 ```bash
-python import_entities.py
-python import_intents.py
-python import_param_intent.py
+git clone https://github.com/alansms/chatboot_dialogflow.git
+cd chatboot_dialogflow/AULAS/2-SEMESTRE/LNP
 ```
 
-## Formato do Cardápio (CSV/XLSX)
-
-O arquivo de cardápio deve conter as colunas:
-- `categoria` (ex: Burgers, Bebidas, Porções)
-- `item` (nome do produto)
-- `descricao` (descrição do item)
-- `preco` (valor numérico)
-- `vegetariano` (sim/não, opcional)
-- `sinonimos` (separados por |, opcional)
-
-Exemplo:
-
-```
-categoria,item,descricao,preco,vegetariano,sinonimos
-Burgers,Cheeseburger,Hambúrguer com queijo,18.90,nao,cheese|x-burguer
-Burgers,Vegetariano,Hambúrguer de grão de bico,20.00,sim,veg|veggie
-Bebidas,Coca-Cola,Refrigerante lata,6.00,nao,coca|coca-cola
-Porções,Batata Frita,Batata frita crocante,12.00,sim,batata|fritas
+2. **Execute o script de deploy:**
+```bash
+chmod +x deploy.sh
+./deploy.sh
 ```
 
-## Segurança
-- **NUNCA** compartilhe ou versiona o arquivo de credenciais do Google (Service Account) em repositórios públicos.
-- O token do Telegram deve ser mantido em segredo.
+3. **Configure as variáveis de ambiente:**
+```bash
+export TELEGRAM_TOKEN="seu_token"
+export WEBHOOK_URL="https://seu-dominio.com/telegram"
+```
 
-## Observações
-- O carrinho de compras é mantido em memória por sessão (não persistente).
-- O sistema pode ser facilmente expandido para outros canais (WhatsApp, Messenger, etc.).
-- Scripts de importação facilitam a automação do setup do Dialogflow.
+4. **Configure o webhook do Telegram:**
+```bash
+python telegram_setup.py setup
+```
 
-## Licença
-Projeto acadêmico FIAP. Uso livre para fins educacionais.
+## 🔒 Segurança
 
+- Credenciais protegidas via variáveis de ambiente
+- Arquivo `.gitignore` configurado
+- Validação de entrada e tratamento de erros
+- HTTPS obrigatório para produção
+- Firewall configurado no deploy
+
+## 📈 Monitoramento
+
+O sistema fornece:
+
+- Health check endpoint (`/health`)
+- Estatísticas em tempo real (`/stats`)
+- Logs detalhados de todas as operações
+- Monitoramento de performance
+
+## 🚨 Troubleshooting
+
+### **Erro de Credenciais:**
+```
+⚠️ Credenciais do Dialogflow não configuradas
+```
+**Solução:** Verifique se as credenciais estão configuradas corretamente.
+
+### **Erro de Webhook:**
+```
+❌ Erro ao configurar webhook
+```
+**Solução:** Verifique se a URL é acessível publicamente.
+
+### **Erro de Telegram:**
+```
+❌ TELEGRAM_TOKEN não encontrado
+```
+**Solução:** Configure a variável de ambiente com o token correto.
+
+## 🎯 Funcionalidades Avançadas
+
+### **Gerenciador de Intents:**
+- Criação de novas intents via interface
+- Edição de intents existentes
+- Importação/exportação de intents
+- Visualização de estatísticas
+
+### **Gerenciador de Entidades:**
+- Criação de entidades personalizadas
+- Configuração de valores e sinônimos
+- Categorização automática
+- Testes de funcionamento
+
+### **Sistema de Chamados:**
+- Abertura automática de chamados
+- Numeração sequencial
+- Status em tempo real
+- Histórico completo
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto é desenvolvido para fins educacionais na FIAP.
+
+## 🎉 Status do Projeto
+
+**✅ COMPLETO E FUNCIONAL**
+
+- Interface Web: ✅ Funcionando
+- Telegram Bot: ✅ Funcionando (@chat_fiap_bot)
+- Dialogflow: ✅ Integrado
+- Gerenciador de Intents: ✅ Funcionando
+- Gerenciador de Entidades: ✅ Funcionando
+- Deploy VPS: ✅ Scripts prontos
+- Documentação: ✅ Completa
+
+---
+
+**Desenvolvido com ❤️ usando Flask + Google Cloud Dialogflow + Telegram**
+
+**FiapNet - Conectando você ao futuro! 🌐**

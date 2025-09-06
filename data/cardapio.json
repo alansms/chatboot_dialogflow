@@ -1,0 +1,242 @@
+{
+  "last_updated": "2025-08-27T23:37:49.750292",
+  "version": "1.2000000000000002",
+  "categorias": {
+    "hambúrguer": {
+      "nome": "🍽️ Hambúrguer",
+      "itens": [
+        {
+          "id": "h001",
+          "nome": "X-Bacon Deluxe",
+          "preco": 28.9,
+          "descricao": "Hambúrguer premium com bacon especial",
+          "disponivel": true,
+          "ingredientes": [
+            "hambúrguer",
+            "bacon",
+            "queijo",
+            "alface"
+          ],
+          "calorias": 720
+        },
+        {
+          "id": "h002",
+          "nome": "X-Vegetariano",
+          "preco": 24.5,
+          "descricao": "Hambúrguer vegetariano saudável",
+          "disponivel": true,
+          "ingredientes": [
+            "hambúrguer vegetal",
+            "queijo",
+            "tomate"
+          ],
+          "calorias": 480
+        }
+      ]
+    },
+    "bebida": {
+      "nome": "🥤 Bebida",
+      "itens": [
+        {
+          "id": "b001",
+          "nome": "Refrigerante",
+          "preco": 6.0,
+          "descricao": "Refrigerante gelado 350ml",
+          "disponivel": true,
+          "ingredientes": [
+            "água",
+            "açúcar",
+            "conservantes"
+          ],
+          "calorias": 140
+        }
+      ]
+    },
+    "sobremesa": {
+      "nome": "🍰 Sobremesa",
+      "itens": [
+        {
+          "id": "s001",
+          "nome": "Milk Shake",
+          "preco": 15.0,
+          "descricao": "Milk shake cremoso de chocolate",
+          "disponivel": false,
+          "ingredientes": [
+            "leite",
+            "chocolate",
+            "sorvete"
+          ],
+          "calorias": 350
+        }
+      ]
+    },
+    "burgers": {
+      "nome": "🍽️ Burgers",
+      "itens": [
+        {
+          "id": "b001",
+          "nome": "Truffle Burger",
+          "preco": 39.9,
+          "descricao": "Hambúrguer bovino com creme de trufas e queijo suíço",
+          "disponivel": true,
+          "ingredientes": [
+            "pão",
+            "carne bovina",
+            "queijo suíço",
+            "creme de trufas"
+          ],
+          "calorias": 780
+        },
+        {
+          "id": "b002",
+          "nome": "Lamb Burger",
+          "preco": 42.9,
+          "descricao": "Hambúrguer de cordeiro com molho de hortelã",
+          "disponivel": true,
+          "ingredientes": [
+            "pão",
+            "carne de cordeiro",
+            "molho de hortelã"
+          ],
+          "calorias": 820
+        }
+      ]
+    },
+    "porções": {
+      "nome": "🍽️ Porções",
+      "itens": [
+        {
+          "id": "p001",
+          "nome": "Bolinho de Queijo",
+          "preco": 22.0,
+          "descricao": "Porção com 10 bolinhos de queijo",
+          "disponivel": true,
+          "ingredientes": [
+            "queijo",
+            "massa",
+            "óleo"
+          ],
+          "calorias": 550
+        },
+        {
+          "id": "p002",
+          "nome": "Bolinho de Carne",
+          "preco": 24.0,
+          "descricao": "Porção com 10 bolinhos de carne",
+          "disponivel": true,
+          "ingredientes": [
+            "carne bovina",
+            "massa",
+            "óleo"
+          ],
+          "calorias": 600
+        }
+      ]
+    },
+    "bebidas": {
+      "nome": "🥤 Bebidas",
+      "itens": [
+        {
+          "id": "b001",
+          "nome": "Suco Uva Integral",
+          "preco": 11.9,
+          "descricao": "Suco de uva 300ml",
+          "disponivel": true,
+          "ingredientes": [
+            "uva",
+            "água"
+          ],
+          "calorias": 120
+        },
+        {
+          "id": "b002",
+          "nome": "Smoothie Morango Banana",
+          "preco": 15.9,
+          "descricao": "Smoothie natural 400ml",
+          "disponivel": true,
+          "ingredientes": [
+            "morango",
+            "banana",
+            "iogurte"
+          ],
+          "calorias": 200
+        },
+        {
+          "id": "b003",
+          "nome": "Energético Lata",
+          "preco": 12.9,
+          "descricao": "Lata 250ml",
+          "disponivel": true,
+          "ingredientes": [
+            "cafeína",
+            "taurina",
+            "açúcar"
+          ],
+          "calorias": 110
+        }
+      ]
+    },
+    "sobremesas": {
+      "nome": "🍰 Sobremesas",
+      "itens": [
+        {
+          "id": "s001",
+          "nome": "Milk Pie",
+          "preco": 14.9,
+          "descricao": "Torta cremosa de leite condensado",
+          "disponivel": true,
+          "ingredientes": [
+            "leite condensado",
+            "massa",
+            "creme"
+          ],
+          "calorias": 420
+        },
+        {
+          "id": "s002",
+          "nome": "Churros",
+          "preco": 13.9,
+          "descricao": "Churros com doce de leite",
+          "disponivel": true,
+          "ingredientes": [
+            "farinha",
+            "óleo",
+            "doce de leite"
+          ],
+          "calorias": 380
+        }
+      ]
+    },
+    "combos": {
+      "nome": "🍽️ Combos",
+      "itens": [
+        {
+          "id": "c001",
+          "nome": "Combo Vegetariano",
+          "preco": 36.9,
+          "descricao": "Veggie Burger + Fritas P + Suco natural",
+          "disponivel": true,
+          "ingredientes": [
+            "veg burger",
+            "batata frita",
+            "suco"
+          ],
+          "calorias": 950
+        },
+        {
+          "id": "c002",
+          "nome": "Combo Premium",
+          "preco": 55.9,
+          "descricao": "Picanha Burger + Batata Cheddar Bacon + Refri lata",
+          "disponivel": true,
+          "ingredientes": [
+            "picanha burger",
+            "batata cheddar bacon",
+            "refrigerante"
+          ],
+          "calorias": 1300
+        }
+      ]
+    }
+  }
+}

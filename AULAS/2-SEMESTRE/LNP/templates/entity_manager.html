@@ -1,0 +1,658 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciador de Entidades - FiapNet{% endblock %}
+
+{% block extra_css %}
+<style>
+.entity-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid #28a745;
+}
+
+.entity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.entity-value {
+    background-color: #e8f5e8;
+    border: 1px solid #c3e6cb;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.synonym-item {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0.1rem;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+.entity-type-badge {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.type-custom {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.type-system {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.json-preview {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6 fw-bold text-primary">
+                    <i class="fas fa-tags me-3"></i>
+                    Gerenciador de Entidades
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshEntities()">
+                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createEntityModal">
+                        <i class="fas fa-plus me-2"></i>Nova Entidade
+                    </button>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importEntityModal">
+                        <i class="fas fa-upload me-2"></i>Importar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" id="searchEntities" placeholder="Buscar entidades...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filterType">
+                <option value="">Todos os tipos</option>
+                <option value="custom">Personalizadas</option>
+                <option value="system">Sistema</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filterCategory">
+                <option value="">Todas as categorias</option>
+                <option value="problema">Problemas</option>
+                <option value="urgencia">Urgência</option>
+                <option value="plano">Planos</option>
+                <option value="status">Status</option>
+                <option value="outros">Outros</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Lista de Entidades -->
+    <div class="row" id="entitiesContainer">
+        <!-- Entidades serão carregadas via JavaScript -->
+    </div>
+
+    <!-- Paginação -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Paginação de entidades">
+                <ul class="pagination justify-content-center" id="pagination">
+                    <!-- Paginação será gerada via JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Criar/Editar Entidade -->
+<div class="modal fade" id="createEntityModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    <span id="modalTitle">Nova Entidade</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="entityForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="entityName" class="form-label">Nome da Entidade</label>
+                                <input type="text" class="form-control" id="entityName" required>
+                                <div class="form-text">Use PascalCase (ex: TipoProblema)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="entityCategory" class="form-label">Categoria</label>
+                                <select class="form-select" id="entityCategory">
+                                    <option value="problema">Problemas</option>
+                                    <option value="urgencia">Urgência</option>
+                                    <option value="plano">Planos</option>
+                                    <option value="status">Status</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="entityDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="entityDescription" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valores da Entidade</label>
+                        <div id="entityValues">
+                            <div class="entity-value-item mb-2">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control entity-value-input" placeholder="Valor principal...">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control entity-synonyms-input" placeholder="Sinônimos (separados por vírgula)">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntityValue(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addEntityValue()">
+                            <i class="fas fa-plus me-1"></i>Adicionar Valor
+                        </button>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="entityActive" checked>
+                                <label class="form-check-label" for="entityActive">
+                                    Entidade Ativa
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="entityAutoExpand">
+                                <label class="form-check-label" for="entityAutoExpand">
+                                    Auto-expansão
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveEntity()">
+                    <i class="fas fa-save me-2"></i>Salvar Entidade
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Importar Entidade -->
+<div class="modal fade" id="importEntityModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload me-2"></i>
+                    Importar Entidade
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="importType" class="form-label">Tipo de Importação</label>
+                    <select class="form-select" id="importType">
+                        <option value="json">Arquivo JSON</option>
+                        <option value="text">Texto JSON</option>
+                    </select>
+                </div>
+
+                <div id="importFileSection">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Arquivo JSON</label>
+                        <input type="file" class="form-control" id="importFile" accept=".json">
+                    </div>
+                </div>
+
+                <div id="importTextSection" style="display: none;">
+                    <div class="mb-3">
+                        <label for="importText" class="form-label">JSON da Entidade</label>
+                        <textarea class="form-control" id="importText" rows="10" placeholder="Cole aqui o JSON da entidade..."></textarea>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Formato esperado:</strong> JSON com as propriedades da entidade (displayName, entities, etc.)
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="importEntity()">
+                    <i class="fas fa-upload me-2"></i>Importar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Visualizar Entidade -->
+<div class="modal fade" id="viewEntityModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>
+                    Visualizar Entidade
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="entityDetails">
+                    <!-- Detalhes da entidade serão carregados aqui -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="editEntity()">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class EntityManager {
+    constructor() {
+        this.entities = [];
+        this.filteredEntities = [];
+        this.currentPage = 1;
+        this.itemsPerPage = 6;
+        this.currentEntity = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.loadEntities();
+    }
+    
+    setupEventListeners() {
+        // Busca
+        document.getElementById('searchEntities').addEventListener('input', (e) => {
+            this.filterEntities();
+        });
+        
+        // Filtros
+        document.getElementById('filterType').addEventListener('change', () => {
+            this.filterEntities();
+        });
+        
+        document.getElementById('filterCategory').addEventListener('change', () => {
+            this.filterEntities();
+        });
+        
+        // Import type change
+        document.getElementById('importType').addEventListener('change', (e) => {
+            const fileSection = document.getElementById('importFileSection');
+            const textSection = document.getElementById('importTextSection');
+            
+            if (e.target.value === 'json') {
+                fileSection.style.display = 'block';
+                textSection.style.display = 'none';
+            } else {
+                fileSection.style.display = 'none';
+                textSection.style.display = 'block';
+            }
+        });
+    }
+    
+    async loadEntities() {
+        try {
+            const response = await fetch('/api/entities');
+            const data = await response.json();
+            
+            this.entities = data.entities || [];
+            this.filterEntities();
+        } catch (error) {
+            console.error('Erro ao carregar entidades:', error);
+            this.showNotification('Erro ao carregar entidades', 'danger');
+        }
+    }
+    
+    filterEntities() {
+        const searchTerm = document.getElementById('searchEntities').value.toLowerCase();
+        const typeFilter = document.getElementById('filterType').value;
+        const categoryFilter = document.getElementById('filterCategory').value;
+        
+        this.filteredEntities = this.entities.filter(entity => {
+            const matchesSearch = entity.displayName.toLowerCase().includes(searchTerm) ||
+                                entity.description?.toLowerCase().includes(searchTerm);
+            
+            const matchesType = !typeFilter || 
+                              (typeFilter === 'custom' && entity.kind === 'KIND_MAP') ||
+                              (typeFilter === 'system' && entity.kind === 'KIND_LIST');
+            
+            const matchesCategory = !categoryFilter || entity.category === categoryFilter;
+            
+            return matchesSearch && matchesType && matchesCategory;
+        });
+        
+        this.currentPage = 1;
+        this.renderEntities();
+    }
+    
+    renderEntities() {
+        const container = document.getElementById('entitiesContainer');
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const pageEntities = this.filteredEntities.slice(startIndex, endIndex);
+        
+        if (pageEntities.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhuma entidade encontrada</h5>
+                        <p class="text-muted">Tente ajustar os filtros ou criar uma nova entidade.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = pageEntities.map(entity => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card entity-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">${entity.displayName}</h6>
+                            <span class="entity-type-badge ${entity.kind === 'KIND_MAP' ? 'type-custom' : 'type-system'}">
+                                ${entity.kind === 'KIND_MAP' ? 'Personalizada' : 'Sistema'}
+                            </span>
+                        </div>
+                        
+                        <p class="card-text text-muted small mb-2">
+                            ${entity.description || 'Sem descrição'}
+                        </p>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">Categoria:</small>
+                            <span class="badge bg-secondary ms-1">${entity.category || 'N/A'}</span>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">Valores:</small>
+                            <span class="badge bg-info ms-1">${entity.entities?.length || 0}</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Auto-expansão:</small>
+                            <span class="badge ${entity.autoExpansionMode === 'AUTO_EXPANSION_MODE_DEFAULT' ? 'bg-success' : 'bg-secondary'} ms-1">
+                                ${entity.autoExpansionMode === 'AUTO_EXPANSION_MODE_DEFAULT' ? 'Sim' : 'Não'}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="entityManager.viewEntity('${entity.name}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="entityManager.editEntity('${entity.name}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="entityManager.deleteEntity('${entity.name}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        this.renderPagination();
+    }
+    
+    renderPagination() {
+        const totalPages = Math.ceil(this.filteredEntities.length / this.itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        
+        if (totalPages <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Previous button
+        paginationHTML += `
+            <li class="page-item ${this.currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="entityManager.goToPage(${this.currentPage - 1})">Anterior</a>
+            </li>
+        `;
+        
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
+                paginationHTML += `
+                    <li class="page-item ${i === this.currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="entityManager.goToPage(${i})">${i}</a>
+                    </li>
+                `;
+            } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
+                paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+        
+        // Next button
+        paginationHTML += `
+            <li class="page-item ${this.currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="entityManager.goToPage(${this.currentPage + 1})">Próximo</a>
+            </li>
+        `;
+        
+        pagination.innerHTML = paginationHTML;
+    }
+    
+    goToPage(page) {
+        const totalPages = Math.ceil(this.filteredEntities.length / this.itemsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            this.currentPage = page;
+            this.renderEntities();
+        }
+    }
+    
+    async viewEntity(entityName) {
+        try {
+            const response = await fetch(`/api/entities/${encodeURIComponent(entityName)}`);
+            const entity = await response.json();
+            
+            this.currentEntity = entity;
+            this.showEntityDetails(entity);
+            
+            const modal = new bootstrap.Modal(document.getElementById('viewEntityModal'));
+            modal.show();
+        } catch (error) {
+            console.error('Erro ao carregar entidade:', error);
+            this.showNotification('Erro ao carregar entidade', 'danger');
+        }
+    }
+    
+    showEntityDetails(entity) {
+        const container = document.getElementById('entityDetails');
+        
+        container.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Informações Básicas</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Nome:</strong></td><td>${entity.displayName}</td></tr>
+                        <tr><td><strong>Categoria:</strong></td><td>${entity.category || 'N/A'}</td></tr>
+                        <tr><td><strong>Tipo:</strong></td><td><span class="badge ${entity.kind === 'KIND_MAP' ? 'bg-primary' : 'bg-secondary'}">${entity.kind === 'KIND_MAP' ? 'Personalizada' : 'Sistema'}</span></td></tr>
+                        <tr><td><strong>Auto-expansão:</strong></td><td><span class="badge ${entity.autoExpansionMode === 'AUTO_EXPANSION_MODE_DEFAULT' ? 'bg-success' : 'bg-secondary'}">${entity.autoExpansionMode === 'AUTO_EXPANSION_MODE_DEFAULT' ? 'Habilitada' : 'Desabilitada'}</span></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Estatísticas</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Total de valores:</strong></td><td>${entity.entities?.length || 0}</td></tr>
+                        <tr><td><strong>Valores únicos:</strong></td><td>${new Set(entity.entities?.map(e => e.value)).size || 0}</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Descrição</h6>
+                <p class="text-muted">${entity.description || 'Sem descrição'}</p>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Valores da Entidade</h6>
+                <div class="entity-values">
+                    ${(entity.entities || []).map(entityValue => `
+                        <div class="entity-value">
+                            <strong>${entityValue.value}</strong>
+                            ${entityValue.synonyms && entityValue.synonyms.length > 0 ? `
+                                <div class="mt-1">
+                                    <small class="text-muted">Sinônimos:</small>
+                                    ${entityValue.synonyms.map(synonym => `<span class="synonym-item">${synonym}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h6>JSON Completo</h6>
+                <div class="json-preview">
+                    <pre><code>${JSON.stringify(entity, null, 2)}</code></pre>
+                </div>
+            </div>
+        `;
+    }
+    
+    async editEntity(entityName) {
+        // Implementar edição de entidade
+        this.showNotification('Funcionalidade de edição será implementada em breve', 'info');
+    }
+    
+    async deleteEntity(entityName) {
+        if (confirm(`Tem certeza que deseja excluir a entidade "${entityName}"?`)) {
+            try {
+                const response = await fetch(`/api/entities/${encodeURIComponent(entityName)}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    this.showNotification('Entidade excluída com sucesso', 'success');
+                    this.loadEntities();
+                } else {
+                    throw new Error('Erro ao excluir entidade');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir entidade:', error);
+                this.showNotification('Erro ao excluir entidade', 'danger');
+            }
+        }
+    }
+    
+    showNotification(message, type) {
+        // Implementar notificação
+        alert(message);
+    }
+}
+
+// Funções globais para os botões
+function refreshEntities() {
+    if (window.entityManager) {
+        window.entityManager.loadEntities();
+    }
+}
+
+function addEntityValue() {
+    const container = document.getElementById('entityValues');
+    const newValue = document.createElement('div');
+    newValue.className = 'entity-value-item mb-2';
+    newValue.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control entity-value-input" placeholder="Valor principal...">
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control entity-synonyms-input" placeholder="Sinônimos (separados por vírgula)">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeEntityValue(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(newValue);
+}
+
+function removeEntityValue(button) {
+    button.closest('.entity-value-item').remove();
+}
+
+function saveEntity() {
+    // Implementar salvamento de entidade
+    alert('Funcionalidade de salvamento será implementada em breve');
+}
+
+function importEntity() {
+    // Implementar importação de entidade
+    alert('Funcionalidade de importação será implementada em breve');
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.entityManager = new EntityManager();
+});
+</script>
+{% endblock %}

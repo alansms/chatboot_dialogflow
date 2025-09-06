@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}FiapNet - Suporte de Internet{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-wifi me-3"></i>
+                    Suporte Técnico 24/7
+                </h1>
+                <p class="lead mb-4">
+                    Nossa equipe de especialistas está pronta para resolver seus problemas de internet 
+                    com agilidade e eficiência. Conecte-se conosco agora!
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('chat') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-comments me-2"></i>Iniciar Chat
+                    </a>
+                    <a href="{{ url_for('status') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Consultar Status
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-headset display-1 opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="display-5 fw-bold mb-3">Como Podemos Ajudar</h2>
+            <p class="lead text-muted">Oferecemos suporte completo para todos os seus problemas de internet</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-tools fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Abertura de Chamados</h5>
+                    <p class="card-text text-muted">
+                        Abra chamados técnicos de forma rápida e fácil. 
+                        Nossa IA identifica automaticamente o tipo de problema.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-search fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">Consulta de Status</h5>
+                    <p class="card-text text-muted">
+                        Acompanhe o andamento do seu chamado em tempo real. 
+                        Receba atualizações automáticas por SMS.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-info text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-question-circle fa-2x"></i>
+                    </div>
+                    <h5 class="card-title">FAQ e Soluções</h5>
+                    <p class="card-text text-muted">
+                        Encontre respostas rápidas para problemas comuns. 
+                        Soluções passo a passo para resolver você mesmo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold text-primary" id="chamados-ativos">0</h3>
+                    <p class="text-muted">Chamados Ativos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold text-success" id="clientes-cadastrados">0</h3>
+                    <p class="text-muted">Clientes Atendidos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold text-info" id="total-chamados">0</h3>
+                    <p class="text-muted">Total de Chamados</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold text-warning">24/7</h3>
+                    <p class="text-muted">Suporte Disponível</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="display-5 fw-bold mb-4">Precisa de Ajuda Imediata?</h2>
+            <p class="lead text-muted mb-4">
+                Nossa equipe está disponível 24 horas por dia para emergências. 
+                Para problemas críticos, use nossos canais de contato direto.
+            </p>
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="contact-card p-3 border rounded">
+                        <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+                        <h6>Central 24h</h6>
+                        <p class="mb-0 text-muted">0800-123-4567</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card p-3 border rounded">
+                        <i class="fab fa-whatsapp fa-2x text-success mb-2"></i>
+                        <h6>WhatsApp</h6>
+                        <p class="mb-0 text-muted">(11) 99999-0000</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card p-3 border rounded">
+                        <i class="fas fa-envelope fa-2x text-info mb-2"></i>
+                        <h6>Email</h6>
+                        <p class="mb-0 text-muted">suporte@fiapnet.com.br</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Carregar estatísticas em tempo real
+function loadStats() {
+    fetch('/stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('chamados-ativos').textContent = data.chamados_ativos;
+            document.getElementById('clientes-cadastrados').textContent = data.clientes_cadastrados;
+            document.getElementById('total-chamados').textContent = data.total_chamados;
+        })
+        .catch(error => console.error('Erro ao carregar estatísticas:', error));
+}
+
+// Carregar estatísticas ao carregar a página
+document.addEventListener('DOMContentLoaded', loadStats);
+
+// Atualizar estatísticas a cada 30 segundos
+setInterval(loadStats, 30000);
+</script>
+{% endblock %}

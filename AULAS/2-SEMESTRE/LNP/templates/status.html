@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Status de Chamados - FiapNet{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search me-2"></i>
+                        Consulta de Status de Chamados
+                    </h5>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Search Form -->
+                    <form id="status-form" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="chamado-number" class="form-label">Número do Chamado</label>
+                                <input type="text" class="form-control" id="chamado-number" 
+                                       placeholder="Ex: CH12345">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefone" class="form-label">Ou seu Telefone</label>
+                                <input type="text" class="form-control" id="telefone" 
+                                       placeholder="Ex: (11) 99999-8888">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Buscar Chamado
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Search Results -->
+                    <div id="search-results" style="display: none;">
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-check-circle me-2"></i>Chamado Encontrado</h6>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">Informações Básicas</h6>
+                                        <p class="mb-1"><strong>Número:</strong> <span id="result-number">-</span></p>
+                                        <p class="mb-1"><strong>Status:</strong> <span id="result-status" class="badge">-</span></p>
+                                        <p class="mb-1"><strong>Problema:</strong> <span id="result-problema">-</span></p>
+                                        <p class="mb-0"><strong>Urgência:</strong> <span id="result-urgencia" class="badge">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">Detalhes do Atendimento</h6>
+                                        <p class="mb-1"><strong>Aberto em:</strong> <span id="result-aberto">-</span></p>
+                                        <p class="mb-1"><strong>Previsão:</strong> <span id="result-previsao">-</span></p>
+                                        <p class="mb-1"><strong>Técnico:</strong> <span id="result-tecnico">-</span></p>
+                                        <p class="mb-0"><strong>Contato:</strong> <span id="result-contato">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timeline -->
+                        <div class="mt-4">
+                            <h6 class="text-primary">Histórico do Chamado</h6>
+                            <div class="timeline" id="timeline">
+                                <!-- Timeline items will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No Results -->
+                    <div id="no-results" style="display: none;">
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Chamado não encontrado</h6>
+                            <p class="mb-0">Verifique o número do chamado ou telefone informado e tente novamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Tickets -->
+    <div class="row mt-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Chamados Recentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="recent-tickets">
+                        <!-- Recent tickets will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem;
+    top: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: #007bff;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #dee2e6;
+}
+
+.timeline-item.completed::before {
+    background-color: #28a745;
+}
+
+.timeline-item.in-progress::before {
+    background-color: #ffc107;
+}
+
+.timeline-content {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.timeline-time {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.timeline-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-description {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class StatusApp {
+    constructor() {
+        this.statusForm = document.getElementById('status-form');
+        this.searchResults = document.getElementById('search-results');
+        this.noResults = document.getElementById('no-results');
+        this.recentTickets = document.getElementById('recent-tickets');
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.loadRecentTickets();
+    }
+    
+    setupEventListeners() {
+        this.statusForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.searchTicket();
+        });
+    }
+    
+    searchTicket() {
+        const chamadoNumber = document.getElementById('chamado-number').value.trim();
+        const telefone = document.getElementById('telefone').value.trim();
+        
+        if (!chamadoNumber && !telefone) {
+            alert('Por favor, informe o número do chamado ou seu telefone.');
+            return;
+        }
+        
+        // Simular busca (em produção, fazer requisição real)
+        this.showSearchResult();
+    }
+    
+    showSearchResult() {
+        // Dados simulados
+        const mockData = {
+            number: 'CH12345',
+            status: 'Em Andamento',
+            problema: 'Sem Internet',
+            urgencia: 'Alta',
+            aberto: '15/01/2024 14:30',
+            previsao: '15/01/2024 22:30',
+            tecnico: 'João Silva',
+            contato: '(11) 99999-8888',
+            timeline: [
+                {
+                    time: '15/01/2024 14:30',
+                    title: 'Chamado aberto',
+                    description: 'Problema reportado: Sem internet',
+                    status: 'completed'
+                },
+                {
+                    time: '15/01/2024 15:20',
+                    title: 'Técnico designado',
+                    description: 'João Silva foi designado para o atendimento',
+                    status: 'completed'
+                },
+                {
+                    time: '15/01/2024 16:45',
+                    title: 'Técnico a caminho',
+                    description: 'Técnico saiu para o local do atendimento',
+                    status: 'in-progress'
+                }
+            ]
+        };
+        
+        // Preencher dados
+        document.getElementById('result-number').textContent = mockData.number;
+        document.getElementById('result-status').textContent = mockData.status;
+        document.getElementById('result-status').className = 'badge bg-warning';
+        document.getElementById('result-problema').textContent = mockData.problema;
+        document.getElementById('result-urgencia').textContent = mockData.urgencia;
+        document.getElementById('result-urgencia').className = 'badge bg-danger';
+        document.getElementById('result-aberto').textContent = mockData.aberto;
+        document.getElementById('result-previsao').textContent = mockData.previsao;
+        document.getElementById('result-tecnico').textContent = mockData.tecnico;
+        document.getElementById('result-contato').textContent = mockData.contato;
+        
+        // Preencher timeline
+        this.populateTimeline(mockData.timeline);
+        
+        // Mostrar resultados
+        this.searchResults.style.display = 'block';
+        this.noResults.style.display = 'none';
+    }
+    
+    populateTimeline(timeline) {
+        const timelineContainer = document.getElementById('timeline');
+        timelineContainer.innerHTML = '';
+        
+        timeline.forEach(item => {
+            const timelineItem = document.createElement('div');
+            timelineItem.className = `timeline-item ${item.status}`;
+            
+            timelineItem.innerHTML = `
+                <div class="timeline-content">
+                    <div class="timeline-time">${item.time}</div>
+                    <div class="timeline-title">${item.title}</div>
+                    <div class="timeline-description">${item.description}</div>
+                </div>
+            `;
+            
+            timelineContainer.appendChild(timelineItem);
+        });
+    }
+    
+    loadRecentTickets() {
+        // Dados simulados de chamados recentes
+        const recentTickets = [
+            {
+                number: 'CH12345',
+                status: 'Em Andamento',
+                problema: 'Sem Internet',
+                urgencia: 'Alta',
+                time: '15/01/2024 14:30'
+            },
+            {
+                number: 'CH12346',
+                status: 'Resolvido',
+                problema: 'Internet Lenta',
+                urgencia: 'Média',
+                time: '14/01/2024 16:20'
+            },
+            {
+                number: 'CH12347',
+                status: 'Aberto',
+                problema: 'WiFi Fraco',
+                urgencia: 'Baixa',
+                time: '13/01/2024 10:15'
+            }
+        ];
+        
+        this.recentTickets.innerHTML = '';
+        
+        recentTickets.forEach(ticket => {
+            const ticketCard = document.createElement('div');
+            ticketCard.className = 'col-md-4 mb-3';
+            
+            const statusClass = ticket.status === 'Resolvido' ? 'success' : 
+                              ticket.status === 'Em Andamento' ? 'warning' : 'primary';
+            
+            ticketCard.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">${ticket.number}</h6>
+                        <p class="card-text">
+                            <span class="badge bg-${statusClass}">${ticket.status}</span><br>
+                            <small class="text-muted">${ticket.problema}</small><br>
+                            <small class="text-muted">${ticket.time}</small>
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            this.recentTickets.appendChild(ticketCard);
+        });
+    }
+}
+
+// Initialize status app when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new StatusApp();
+});
+</script>
+{% endblock %}

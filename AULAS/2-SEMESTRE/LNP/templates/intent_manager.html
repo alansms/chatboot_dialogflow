@@ -1,0 +1,725 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciador de Intents - FiapNet{% endblock %}
+
+{% block extra_css %}
+<style>
+.intent-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid #007bff;
+}
+
+.intent-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.intent-status {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-draft {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.training-phrase {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.parameter-item {
+    background-color: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.entity-tag {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+.modal-lg {
+    max-width: 90%;
+}
+
+.code-editor {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.json-preview {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6 fw-bold text-primary">
+                    <i class="fas fa-brain me-3"></i>
+                    Gerenciador de Intents
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshIntents()">
+                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createIntentModal">
+                        <i class="fas fa-plus me-2"></i>Nova Intent
+                    </button>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importIntentModal">
+                        <i class="fas fa-upload me-2"></i>Importar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" id="searchIntents" placeholder="Buscar intents...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filterStatus">
+                <option value="">Todos os status</option>
+                <option value="active">Ativas</option>
+                <option value="draft">Rascunho</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filterCategory">
+                <option value="">Todas as categorias</option>
+                <option value="saudacao">Saudação</option>
+                <option value="chamado">Chamados</option>
+                <option value="consulta">Consultas</option>
+                <option value="faq">FAQ</option>
+                <option value="suporte">Suporte</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Lista de Intents -->
+    <div class="row" id="intentsContainer">
+        <!-- Intents serão carregadas via JavaScript -->
+    </div>
+
+    <!-- Paginação -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Paginação de intents">
+                <ul class="pagination justify-content-center" id="pagination">
+                    <!-- Paginação será gerada via JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Criar/Editar Intent -->
+<div class="modal fade" id="createIntentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    <span id="modalTitle">Nova Intent</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="intentForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="intentName" class="form-label">Nome da Intent</label>
+                                <input type="text" class="form-control" id="intentName" required>
+                                <div class="form-text">Use underscore para separar palavras (ex: Abrir_Chamado)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="intentCategory" class="form-label">Categoria</label>
+                                <select class="form-select" id="intentCategory">
+                                    <option value="saudacao">Saudação</option>
+                                    <option value="chamado">Chamados</option>
+                                    <option value="consulta">Consultas</option>
+                                    <option value="faq">FAQ</option>
+                                    <option value="suporte">Suporte</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="intentDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="intentDescription" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Frases de Treinamento</label>
+                        <div id="trainingPhrases">
+                            <div class="training-phrase-item mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control training-phrase-input" placeholder="Digite uma frase de treinamento...">
+                                    <button type="button" class="btn btn-outline-danger" onclick="removeTrainingPhrase(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addTrainingPhrase()">
+                            <i class="fas fa-plus me-1"></i>Adicionar Frase
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Parâmetros</label>
+                        <div id="parameters">
+                            <!-- Parâmetros serão adicionados dinamicamente -->
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addParameter()">
+                            <i class="fas fa-plus me-1"></i>Adicionar Parâmetro
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="intentResponse" class="form-label">Resposta da Intent</label>
+                        <textarea class="form-control" id="intentResponse" rows="4" placeholder="Digite a resposta que o bot deve dar quando esta intent for detectada..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="intentContext" class="form-label">Contextos (opcional)</label>
+                        <input type="text" class="form-control" id="intentContext" placeholder="Contextos separados por vírgula">
+                        <div class="form-text">Contextos que esta intent pode ativar ou usar</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="intentWebhook">
+                                <label class="form-check-label" for="intentWebhook">
+                                    Habilitar Webhook
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="intentActive" checked>
+                                <label class="form-check-label" for="intentActive">
+                                    Intent Ativa
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveIntent()">
+                    <i class="fas fa-save me-2"></i>Salvar Intent
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Importar Intent -->
+<div class="modal fade" id="importIntentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload me-2"></i>
+                    Importar Intent
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="importType" class="form-label">Tipo de Importação</label>
+                    <select class="form-select" id="importType">
+                        <option value="json">Arquivo JSON</option>
+                        <option value="text">Texto JSON</option>
+                    </select>
+                </div>
+
+                <div id="importFileSection">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Arquivo JSON</label>
+                        <input type="file" class="form-control" id="importFile" accept=".json">
+                    </div>
+                </div>
+
+                <div id="importTextSection" style="display: none;">
+                    <div class="mb-3">
+                        <label for="importText" class="form-label">JSON da Intent</label>
+                        <textarea class="form-control code-editor" id="importText" rows="10" placeholder="Cole aqui o JSON da intent..."></textarea>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Formato esperado:</strong> JSON com as propriedades da intent (displayName, trainingPhrases, parameters, etc.)
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="importIntent()">
+                    <i class="fas fa-upload me-2"></i>Importar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Visualizar Intent -->
+<div class="modal fade" id="viewIntentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>
+                    Visualizar Intent
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="intentDetails">
+                    <!-- Detalhes da intent serão carregados aqui -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="editIntent()">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class IntentManager {
+    constructor() {
+        this.intents = [];
+        this.filteredIntents = [];
+        this.currentPage = 1;
+        this.itemsPerPage = 6;
+        this.currentIntent = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.loadIntents();
+    }
+    
+    setupEventListeners() {
+        // Busca
+        document.getElementById('searchIntents').addEventListener('input', (e) => {
+            this.filterIntents();
+        });
+        
+        // Filtros
+        document.getElementById('filterStatus').addEventListener('change', () => {
+            this.filterIntents();
+        });
+        
+        document.getElementById('filterCategory').addEventListener('change', () => {
+            this.filterIntents();
+        });
+        
+        // Import type change
+        document.getElementById('importType').addEventListener('change', (e) => {
+            const fileSection = document.getElementById('importFileSection');
+            const textSection = document.getElementById('importTextSection');
+            
+            if (e.target.value === 'json') {
+                fileSection.style.display = 'block';
+                textSection.style.display = 'none';
+            } else {
+                fileSection.style.display = 'none';
+                textSection.style.display = 'block';
+            }
+        });
+    }
+    
+    async loadIntents() {
+        try {
+            const response = await fetch('/api/intents');
+            const data = await response.json();
+            
+            this.intents = data.intents || [];
+            this.filterIntents();
+        } catch (error) {
+            console.error('Erro ao carregar intents:', error);
+            this.showNotification('Erro ao carregar intents', 'danger');
+        }
+    }
+    
+    filterIntents() {
+        const searchTerm = document.getElementById('searchIntents').value.toLowerCase();
+        const statusFilter = document.getElementById('filterStatus').value;
+        const categoryFilter = document.getElementById('filterCategory').value;
+        
+        this.filteredIntents = this.intents.filter(intent => {
+            const matchesSearch = intent.displayName.toLowerCase().includes(searchTerm) ||
+                                intent.description?.toLowerCase().includes(searchTerm);
+            
+            const matchesStatus = !statusFilter || 
+                                (statusFilter === 'active' && intent.active) ||
+                                (statusFilter === 'draft' && !intent.active);
+            
+            const matchesCategory = !categoryFilter || intent.category === categoryFilter;
+            
+            return matchesSearch && matchesStatus && matchesCategory;
+        });
+        
+        this.currentPage = 1;
+        this.renderIntents();
+    }
+    
+    renderIntents() {
+        const container = document.getElementById('intentsContainer');
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const pageIntents = this.filteredIntents.slice(startIndex, endIndex);
+        
+        if (pageIntents.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhuma intent encontrada</h5>
+                        <p class="text-muted">Tente ajustar os filtros ou criar uma nova intent.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = pageIntents.map(intent => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card intent-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">${intent.displayName}</h6>
+                            <span class="intent-status ${intent.active ? 'status-active' : 'status-draft'}">
+                                ${intent.active ? 'Ativa' : 'Rascunho'}
+                            </span>
+                        </div>
+                        
+                        <p class="card-text text-muted small mb-2">
+                            ${intent.description || 'Sem descrição'}
+                        </p>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">Categoria:</small>
+                            <span class="badge bg-secondary ms-1">${intent.category || 'N/A'}</span>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">Frases de treinamento:</small>
+                            <span class="badge bg-info ms-1">${intent.trainingPhrases?.length || 0}</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Parâmetros:</small>
+                            <span class="badge bg-warning ms-1">${intent.parameters?.length || 0}</span>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="intentManager.viewIntent('${intent.name}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="intentManager.editIntent('${intent.name}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="intentManager.deleteIntent('${intent.name}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        this.renderPagination();
+    }
+    
+    renderPagination() {
+        const totalPages = Math.ceil(this.filteredIntents.length / this.itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        
+        if (totalPages <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Previous button
+        paginationHTML += `
+            <li class="page-item ${this.currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="intentManager.goToPage(${this.currentPage - 1})">Anterior</a>
+            </li>
+        `;
+        
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
+                paginationHTML += `
+                    <li class="page-item ${i === this.currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="intentManager.goToPage(${i})">${i}</a>
+                    </li>
+                `;
+            } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
+                paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+        
+        // Next button
+        paginationHTML += `
+            <li class="page-item ${this.currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="intentManager.goToPage(${this.currentPage + 1})">Próximo</a>
+            </li>
+        `;
+        
+        pagination.innerHTML = paginationHTML;
+    }
+    
+    goToPage(page) {
+        const totalPages = Math.ceil(this.filteredIntents.length / this.itemsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            this.currentPage = page;
+            this.renderIntents();
+        }
+    }
+    
+    async viewIntent(intentName) {
+        try {
+            const response = await fetch(`/api/intents/${encodeURIComponent(intentName)}`);
+            const intent = await response.json();
+            
+            this.currentIntent = intent;
+            this.showIntentDetails(intent);
+            
+            const modal = new bootstrap.Modal(document.getElementById('viewIntentModal'));
+            modal.show();
+        } catch (error) {
+            console.error('Erro ao carregar intent:', error);
+            this.showNotification('Erro ao carregar intent', 'danger');
+        }
+    }
+    
+    showIntentDetails(intent) {
+        const container = document.getElementById('intentDetails');
+        
+        container.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Informações Básicas</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Nome:</strong></td><td>${intent.displayName}</td></tr>
+                        <tr><td><strong>Categoria:</strong></td><td>${intent.category || 'N/A'}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td><span class="badge ${intent.active ? 'bg-success' : 'bg-warning'}">${intent.active ? 'Ativa' : 'Rascunho'}</span></td></tr>
+                        <tr><td><strong>Webhook:</strong></td><td><span class="badge ${intent.webhookState === 'WEBHOOK_STATE_ENABLED' ? 'bg-success' : 'bg-secondary'}">${intent.webhookState === 'WEBHOOK_STATE_ENABLED' ? 'Habilitado' : 'Desabilitado'}</span></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Estatísticas</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Frases de treinamento:</strong></td><td>${intent.trainingPhrases?.length || 0}</td></tr>
+                        <tr><td><strong>Parâmetros:</strong></td><td>${intent.parameters?.length || 0}</td></tr>
+                        <tr><td><strong>Contextos:</strong></td><td>${intent.inputContextNames?.length || 0}</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Descrição</h6>
+                <p class="text-muted">${intent.description || 'Sem descrição'}</p>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Frases de Treinamento</h6>
+                <div class="training-phrases">
+                    ${(intent.trainingPhrases || []).map(phrase => `
+                        <div class="training-phrase">${phrase.parts?.map(part => part.text).join('') || phrase.text || 'N/A'}</div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Parâmetros</h6>
+                <div class="parameters">
+                    ${(intent.parameters || []).map(param => `
+                        <div class="parameter-item">
+                            <strong>${param.displayName}</strong> (${param.entityTypeDisplayName || param.entityType})
+                            ${param.isList ? '<span class="badge bg-info ms-1">Lista</span>' : ''}
+                            ${param.required ? '<span class="badge bg-danger ms-1">Obrigatório</span>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Resposta</h6>
+                <div class="json-preview">
+                    <pre><code>${JSON.stringify(intent.messages || [], null, 2)}</code></pre>
+                </div>
+            </div>
+        `;
+    }
+    
+    async editIntent(intentName) {
+        // Implementar edição de intent
+        this.showNotification('Funcionalidade de edição será implementada em breve', 'info');
+    }
+    
+    async deleteIntent(intentName) {
+        if (confirm(`Tem certeza que deseja excluir a intent "${intentName}"?`)) {
+            try {
+                const response = await fetch(`/api/intents/${encodeURIComponent(intentName)}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    this.showNotification('Intent excluída com sucesso', 'success');
+                    this.loadIntents();
+                } else {
+                    throw new Error('Erro ao excluir intent');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir intent:', error);
+                this.showNotification('Erro ao excluir intent', 'danger');
+            }
+        }
+    }
+    
+    showNotification(message, type) {
+        // Implementar notificação
+        alert(message);
+    }
+}
+
+// Funções globais para os botões
+function refreshIntents() {
+    if (window.intentManager) {
+        window.intentManager.loadIntents();
+    }
+}
+
+function addTrainingPhrase() {
+    const container = document.getElementById('trainingPhrases');
+    const newPhrase = document.createElement('div');
+    newPhrase.className = 'training-phrase-item mb-2';
+    newPhrase.innerHTML = `
+        <div class="input-group">
+            <input type="text" class="form-control training-phrase-input" placeholder="Digite uma frase de treinamento...">
+            <button type="button" class="btn btn-outline-danger" onclick="removeTrainingPhrase(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(newPhrase);
+}
+
+function removeTrainingPhrase(button) {
+    button.closest('.training-phrase-item').remove();
+}
+
+function addParameter() {
+    const container = document.getElementById('parameters');
+    const newParam = document.createElement('div');
+    newParam.className = 'parameter-item mb-2';
+    newParam.innerHTML = `
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" class="form-control form-control-sm" placeholder="Nome do parâmetro">
+            </div>
+            <div class="col-md-4">
+                <select class="form-select form-select-sm">
+                    <option value="">Selecione a entidade</option>
+                    <option value="@sys.any">Qualquer texto</option>
+                    <option value="@sys.number">Número</option>
+                    <option value="@sys.date">Data</option>
+                    <option value="@sys.time">Hora</option>
+                    <option value="@sys.email">Email</option>
+                    <option value="@sys.phone-number">Telefone</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox">
+                    <label class="form-check-label">Obrigatório</label>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeParameter(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(newParam);
+}
+
+function removeParameter(button) {
+    button.closest('.parameter-item').remove();
+}
+
+function saveIntent() {
+    // Implementar salvamento de intent
+    alert('Funcionalidade de salvamento será implementada em breve');
+}
+
+function importIntent() {
+    // Implementar importação de intent
+    alert('Funcionalidade de importação será implementada em breve');
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.intentManager = new IntentManager();
+});
+</script>
+{% endblock %}

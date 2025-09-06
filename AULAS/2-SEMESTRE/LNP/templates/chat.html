@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - FiapNet{% endblock %}
+
+{% block extra_css %}
+<style>
+.chat-container {
+    height: calc(100vh - 200px);
+    max-height: 600px;
+}
+
+.chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.message.user {
+    text-align: right;
+}
+
+.message.bot {
+    text-align: left;
+}
+
+.message-content {
+    display: inline-block;
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    word-wrap: break-word;
+}
+
+.message.user .message-content {
+    background-color: #007bff;
+    color: white;
+}
+
+.message.bot .message-content {
+    background-color: white;
+    color: #333;
+    border: 1px solid #dee2e6;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.typing-indicator {
+    display: none;
+    padding: 0.75rem 1rem;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+    max-width: 70%;
+}
+
+.typing-dots {
+    display: inline-block;
+}
+
+.typing-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    margin: 0 2px;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-input-container {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.quick-action-btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>
+                            Chat de Suporte
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-success me-2" id="status-indicator">
+                                <i class="fas fa-circle me-1"></i>Online
+                            </span>
+                            <small id="connection-status">Conectado</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <!-- Quick Actions -->
+                    <div class="p-3 border-bottom">
+                        <h6 class="mb-2">Ações Rápidas:</h6>
+                        <div class="quick-actions">
+                            <button class="btn btn-outline-primary btn-sm quick-action-btn" data-message="Olá">
+                                <i class="fas fa-hand-wave me-1"></i>Olá
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm quick-action-btn" data-message="Quero abrir um chamado">
+                                <i class="fas fa-plus me-1"></i>Abrir Chamado
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm quick-action-btn" data-message="Consultar status do chamado">
+                                <i class="fas fa-search me-1"></i>Status
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm quick-action-btn" data-message="Informações sobre planos">
+                                <i class="fas fa-info-circle me-1"></i>Planos
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm quick-action-btn" data-message="Soluções rápidas">
+                                <i class="fas fa-tools me-1"></i>Soluções
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot">
+                            <div class="message-content">
+                                <strong>FiapNet Bot:</strong> Olá! Bem-vindo ao suporte da FiapNet! 🌐<br><br>
+                                Sou seu assistente virtual e posso ajudar com:<br>
+                                • Abertura de chamados técnicos<br>
+                                • Consulta de status de chamados<br>
+                                • Informações sobre planos e serviços<br>
+                                • Soluções rápidas para problemas comuns<br><br>
+                                Como posso ajudá-lo hoje?
+                            </div>
+                            <div class="message-time">Agora</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="ms-2">FiapNet Bot está digitando...</span>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="chat-input-container">
+                        <form id="chat-form">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="message-input" 
+                                       placeholder="Digite sua mensagem..." autocomplete="off">
+                                <button class="btn btn-primary" type="submit" id="send-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+class ChatApp {
+    constructor() {
+        this.socket = null;
+        this.messagesContainer = document.getElementById('chat-messages');
+        this.messageInput = document.getElementById('message-input');
+        this.chatForm = document.getElementById('chat-form');
+        this.typingIndicator = document.getElementById('typing-indicator');
+        this.statusIndicator = document.getElementById('status-indicator');
+        this.connectionStatus = document.getElementById('connection-status');
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.connectWebSocket();
+    }
+    
+    setupEventListeners() {
+        // Form submission
+        this.chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.sendMessage();
+        });
+        
+        // Quick action buttons
+        document.querySelectorAll('.quick-action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const message = btn.getAttribute('data-message');
+                this.messageInput.value = message;
+                this.sendMessage();
+            });
+        });
+        
+        // Enter key
+        this.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
+        });
+    }
+    
+    connectWebSocket() {
+        // Para desenvolvimento local, usar polling
+        // Em produção, configurar WebSocket real
+        this.statusIndicator.innerHTML = '<i class="fas fa-circle me-1"></i>Online';
+        this.connectionStatus.textContent = 'Conectado via HTTP';
+    }
+    
+    sendMessage() {
+        const message = this.messageInput.value.trim();
+        if (!message) return;
+        
+        // Add user message to chat
+        this.addMessage(message, 'user');
+        this.messageInput.value = '';
+        
+        // Show typing indicator
+        this.showTypingIndicator();
+        
+        // Send to backend
+        fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.hideTypingIndicator();
+            this.addMessage(data.response, 'bot');
+        })
+        .catch(error => {
+            this.hideTypingIndicator();
+            this.addMessage('Desculpe, ocorreu um erro. Tente novamente.', 'bot');
+            console.error('Erro:', error);
+        });
+    }
+    
+    addMessage(content, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                ${sender === 'bot' ? '<strong>FiapNet Bot:</strong> ' : ''}${content}
+            </div>
+            <div class="message-time">${timeString}</div>
+        `;
+        
+        this.messagesContainer.appendChild(messageDiv);
+        this.scrollToBottom();
+    }
+    
+    showTypingIndicator() {
+        this.typingIndicator.style.display = 'block';
+        this.scrollToBottom();
+    }
+    
+    hideTypingIndicator() {
+        this.typingIndicator.style.display = 'none';
+    }
+    
+    scrollToBottom() {
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+    }
+}
+
+// Initialize chat when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new ChatApp();
+});
+</script>
+{% endblock %}

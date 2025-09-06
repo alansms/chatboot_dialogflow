@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - FiapNet{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary">
+                    <i class="fas fa-question-circle me-3"></i>
+                    Perguntas Frequentes
+                </h1>
+                <p class="lead text-muted">
+                    Encontre respostas rápidas para as dúvidas mais comuns sobre nossos serviços
+                </p>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="row mb-5">
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="faq-search" 
+                               placeholder="Digite sua dúvida...">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Categories -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Horários</h5>
+                            <p class="card-text text-muted">Informações sobre horários de atendimento</p>
+                            <button class="btn btn-outline-primary" data-bs-toggle="collapse" 
+                                    data-bs-target="#horarios-collapse">
+                                Ver Perguntas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-dollar-sign fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Planos e Preços</h5>
+                            <p class="card-text text-muted">Informações sobre nossos planos de internet</p>
+                            <button class="btn btn-outline-success" data-bs-toggle="collapse" 
+                                    data-bs-target="#planos-collapse">
+                                Ver Perguntas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-warning text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-tools fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Soluções Rápidas</h5>
+                            <p class="card-text text-muted">Como resolver problemas comuns</p>
+                            <button class="btn btn-outline-warning" data-bs-toggle="collapse" 
+                                    data-bs-target="#solucoes-collapse">
+                                Ver Perguntas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Content -->
+            <div class="accordion" id="faqAccordion">
+                <!-- Horários -->
+                <div class="collapse" id="horarios-collapse" data-bs-parent="#faqAccordion">
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-clock me-2"></i>
+                                Horários de Atendimento
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="horariosAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#horario-suporte">
+                                            Qual o horário de atendimento do suporte técnico?
+                                        </button>
+                                    </h2>
+                                    <div id="horario-suporte" class="accordion-collapse collapse show" 
+                                         data-bs-parent="#horariosAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Suporte Técnico:</strong><br>
+                                            • Segunda a Sexta: 8h às 22h<br>
+                                            • Sábado: 8h às 18h<br>
+                                            • Domingo: 10h às 16h<br><br>
+                                            <strong>Emergências (sem internet):</strong><br>
+                                            • 24 horas por dia, todos os dias<br><br>
+                                            <strong>Comercial:</strong><br>
+                                            • Segunda a Sexta: 9h às 18h<br>
+                                            • Sábado: 9h às 13h
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#horario-emergencia">
+                                            Vocês atendem emergências 24h?
+                                        </button>
+                                    </h2>
+                                    <div id="horario-emergencia" class="accordion-collapse collapse" 
+                                         data-bs-parent="#horariosAccordion">
+                                        <div class="accordion-body">
+                                            Sim! Para emergências relacionadas à falta total de internet, 
+                                            nosso suporte está disponível 24 horas por dia, todos os dias. 
+                                            Ligue para 0800-123-4567.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Planos -->
+                <div class="collapse" id="planos-collapse" data-bs-parent="#faqAccordion">
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-dollar-sign me-2"></i>
+                                Planos e Preços
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">🥉 BÁSICO - 50MB</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="text-success">R$ 59,90/mês</h4>
+                                            <ul class="list-unstyled">
+                                                <li>• Download: 50 Mbps</li>
+                                                <li>• Upload: 25 Mbps</li>
+                                                <li>• Ideal para: 2-3 pessoas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">🥈 INTERMEDIÁRIO - 100MB</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="text-success">R$ 79,90/mês</h4>
+                                            <ul class="list-unstyled">
+                                                <li>• Download: 100 Mbps</li>
+                                                <li>• Upload: 50 Mbps</li>
+                                                <li>• Ideal para: 4-5 pessoas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">🥇 AVANÇADO - 200MB</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="text-success">R$ 99,90/mês</h4>
+                                            <ul class="list-unstyled">
+                                                <li>• Download: 200 Mbps</li>
+                                                <li>• Upload: 100 Mbps</li>
+                                                <li>• Ideal para: 6-8 pessoas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">💎 PREMIUM - 500MB</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="text-success">R$ 149,90/mês</h4>
+                                            <ul class="list-unstyled">
+                                                <li>• Download: 500 Mbps</li>
+                                                <li>• Upload: 250 Mbps</li>
+                                                <li>• Ideal para: 10+ pessoas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Todos os planos incluem:</strong> WiFi grátis, suporte técnico 24/7, 
+                                e garantia de velocidade.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Soluções -->
+                <div class="collapse" id="solucoes-collapse" data-bs-parent="#faqAccordion">
+                    <div class="card mb-3">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tools me-2"></i>
+                                Soluções Rápidas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="solucoesAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#internet-lenta">
+                                            Internet está lenta, o que fazer?
+                                        </button>
+                                    </h2>
+                                    <div id="internet-lenta" class="accordion-collapse collapse show" 
+                                         data-bs-parent="#solucoesAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Soluções para internet lenta:</strong><br><br>
+                                            1. <strong>Reinicie o modem:</strong> Desligue por 30 segundos e ligue novamente<br>
+                                            2. <strong>Teste com cabo ethernet:</strong> Conecte diretamente ao modem<br>
+                                            3. <strong>Verifique dispositivos:</strong> Quantos aparelhos estão conectados?<br>
+                                            4. <strong>Feche aplicações:</strong> Pare downloads e streaming desnecessários<br>
+                                            5. <strong>Verifique vírus:</strong> Faça uma varredura no computador
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#sem-internet">
+                                            Não consigo acessar a internet, como resolver?
+                                        </button>
+                                    </h2>
+                                    <div id="sem-internet" class="accordion-collapse collapse" 
+                                         data-bs-parent="#solucoesAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Passos para resolver falta de internet:</strong><br><br>
+                                            1. <strong>Verifique cabos:</strong> Todos os cabos estão conectados?<br>
+                                            2. <strong>Reinicie equipamentos:</strong> Modem e roteador por 2 minutos<br>
+                                            3. <strong>Aguarde sincronização:</strong> Espere 2-3 minutos após ligar<br>
+                                            4. <strong>Verifique luzes:</strong> Modem com luzes verdes?<br>
+                                            5. <strong>Teste outro dispositivo:</strong> Funciona no celular?
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#wifi-fraco">
+                                            WiFi está fraco, como melhorar?
+                                        </button>
+                                    </h2>
+                                    <div id="wifi-fraco" class="accordion-collapse collapse" 
+                                         data-bs-parent="#solucoesAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Como melhorar o sinal WiFi:</strong><br><br>
+                                            1. <strong>Aproxime-se do roteador:</strong> Reduza a distância<br>
+                                            2. <strong>Reinicie o WiFi:</strong> Desligue e ligue o WiFi do dispositivo<br>
+                                            3. <strong>Esqueça e reconecte:</strong> Remova a rede e conecte novamente<br>
+                                            4. <strong>Posicione melhor:</strong> Roteador em local central e alto<br>
+                                            5. <strong>Evite interferências:</strong> Microondas, telefones sem fio
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#modem-problema">
+                                            Modem com luzes piscando, o que significa?
+                                        </button>
+                                    </h2>
+                                    <div id="modem-problema" class="accordion-collapse collapse" 
+                                         data-bs-parent="#solucoesAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Significado das luzes do modem:</strong><br><br>
+                                            🔴 <strong>Luz vermelha:</strong> Sem sinal - Problema na rede<br>
+                                            🟡 <strong>Luz amarela:</strong> Sincronizando - Aguarde<br>
+                                            🟢 <strong>Luz verde:</strong> Funcionando - Tudo normal<br>
+                                            ⚪ <strong>Luz piscando:</strong> Transmitindo dados - Normal<br><br>
+                                            <em>Se a luz vermelha persistir por mais de 5 minutos, 
+                                            abra um chamado técnico.</em>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">
+                                <i class="fas fa-headset me-2"></i>
+                                Não encontrou sua resposta?
+                            </h5>
+                            <p class="card-text">
+                                Nossa equipe está pronta para ajudar! Entre em contato conosco.
+                            </p>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <i class="fas fa-phone fa-2x mb-2"></i><br>
+                                    <strong>0800-123-4567</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <i class="fab fa-whatsapp fa-2x mb-2"></i><br>
+                                    <strong>(11) 99999-0000</strong>
+                                </div>
+                                <div class="col-md-4">
+                                    <i class="fas fa-envelope fa-2x mb-2"></i><br>
+                                    <strong>suporte@fiapnet.com.br</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// FAQ Search functionality
+document.getElementById('faq-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const accordionItems = document.querySelectorAll('.accordion-button');
+    
+    accordionItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const accordionItem = item.closest('.accordion-item');
+        
+        if (text.includes(searchTerm)) {
+            accordionItem.style.display = 'block';
+        } else {
+            accordionItem.style.display = 'none';
+        }
+    });
+});
+
+// Auto-expand searched items
+document.getElementById('faq-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    if (searchTerm.length > 2) {
+        const accordionButtons = document.querySelectorAll('.accordion-button');
+        
+        accordionButtons.forEach(button => {
+            const text = button.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                const collapse = document.querySelector(button.getAttribute('data-bs-target'));
+                if (collapse && !collapse.classList.contains('show')) {
+                    new bootstrap.Collapse(collapse, { show: true });
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

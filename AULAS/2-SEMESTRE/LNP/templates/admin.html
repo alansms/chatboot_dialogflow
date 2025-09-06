@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - FiapNet{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6 fw-bold text-primary">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    Dashboard Administrativo
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Chamados Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="admin-chamados-ativos">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-ticket-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Chamados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="admin-total-chamados">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Clientes Cadastrados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="admin-clientes">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Tempo Médio Resolução
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4.2h</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Chamados por Status</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tipos de Problema</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="problemaChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Tickets -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Chamados Recentes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="chamadosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Problema</th>
+                                    <th>Status</th>
+                                    <th>Urgência</th>
+                                    <th>Data Abertura</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chamadosTableBody">
+                                <!-- Dados serão carregados via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.text-xs {
+    font-size: 0.7rem;
+}
+
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.no-gutters > .col,
+.no-gutters > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+class AdminDashboard {
+    constructor() {
+        this.statusChart = null;
+        this.problemaChart = null;
+        this.init();
+    }
+    
+    init() {
+        this.loadStats();
+        this.loadChamados();
+        this.initializeCharts();
+    }
+    
+    async loadStats() {
+        try {
+            const response = await fetch('/stats');
+            const data = await response.json();
+            
+            document.getElementById('admin-chamados-ativos').textContent = data.chamados_ativos;
+            document.getElementById('admin-total-chamados').textContent = data.total_chamados;
+            document.getElementById('admin-clientes').textContent = data.clientes_cadastrados;
+        } catch (error) {
+            console.error('Erro ao carregar estatísticas:', error);
+        }
+    }
+    
+    async loadChamados() {
+        try {
+            const response = await fetch('/chamados');
+            const data = await response.json();
+            
+            this.populateChamadosTable(data.chamados);
+            this.updateCharts(data.chamados);
+        } catch (error) {
+            console.error('Erro ao carregar chamados:', error);
+        }
+    }
+    
+    populateChamadosTable(chamados) {
+        const tbody = document.getElementById('chamadosTableBody');
+        tbody.innerHTML = '';
+        
+        chamados.slice(0, 10).forEach(chamado => {
+            const row = document.createElement('tr');
+            
+            const statusClass = this.getStatusClass(chamado.status);
+            const urgenciaClass = this.getUrgenciaClass(chamado.urgencia);
+            
+            row.innerHTML = `
+                <td><strong>${chamado.id}</strong></td>
+                <td>${chamado.nome}</td>
+                <td>${chamado.problema}</td>
+                <td><span class="badge ${statusClass}">${chamado.status}</span></td>
+                <td><span class="badge ${urgenciaClass}">${chamado.urgencia}</span></td>
+                <td>${chamado.data_abertura}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewChamado('${chamado.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="updateChamado('${chamado.id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
+    }
+    
+    getStatusClass(status) {
+        switch (status.toLowerCase()) {
+            case 'aberto': return 'bg-primary';
+            case 'em andamento': return 'bg-warning';
+            case 'resolvido': return 'bg-success';
+            case 'fechado': return 'bg-secondary';
+            default: return 'bg-light text-dark';
+        }
+    }
+    
+    getUrgenciaClass(urgencia) {
+        switch (urgencia.toLowerCase()) {
+            case 'crítica': return 'bg-danger';
+            case 'alta': return 'bg-warning';
+            case 'média': return 'bg-info';
+            case 'baixa': return 'bg-success';
+            default: return 'bg-light text-dark';
+        }
+    }
+    
+    initializeCharts() {
+        // Status Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        this.statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Abertos', 'Em Andamento', 'Resolvidos'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#4e73df', '#f6c23e', '#1cc88a'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Problema Chart
+        const problemaCtx = document.getElementById('problemaChart').getContext('2d');
+        this.problemaChart = new Chart(problemaCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sem Internet', 'Internet Lenta', 'WiFi', 'Equipamento'],
+                datasets: [{
+                    label: 'Quantidade',
+                    data: [0, 0, 0, 0],
+                    backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#858796'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+    
+    updateCharts(chamados) {
+        // Update Status Chart
+        const statusCounts = {
+            'Aberto': 0,
+            'Em Andamento': 0,
+            'Resolvido': 0
+        };
+        
+        chamados.forEach(chamado => {
+            const status = chamado.status;
+            if (statusCounts.hasOwnProperty(status)) {
+                statusCounts[status]++;
+            }
+        });
+        
+        this.statusChart.data.datasets[0].data = [
+            statusCounts['Aberto'],
+            statusCounts['Em Andamento'],
+            statusCounts['Resolvido']
+        ];
+        this.statusChart.update();
+        
+        // Update Problema Chart
+        const problemaCounts = {
+            'Sem internet': 0,
+            'Internet lenta': 0,
+            'Problema no WiFi': 0,
+            'Equipamento com defeito': 0
+        };
+        
+        chamados.forEach(chamado => {
+            const problema = chamado.problema.toLowerCase();
+            if (problema.includes('sem internet')) problemaCounts['Sem internet']++;
+            else if (problema.includes('lenta')) problemaCounts['Internet lenta']++;
+            else if (problema.includes('wifi')) problemaCounts['Problema no WiFi']++;
+            else if (problema.includes('equipamento')) problemaCounts['Equipamento com defeito']++;
+        });
+        
+        this.problemaChart.data.datasets[0].data = [
+            problemaCounts['Sem internet'],
+            problemaCounts['Internet lenta'],
+            problemaCounts['Problema no WiFi'],
+            problemaCounts['Equipamento com defeito']
+        ];
+        this.problemaChart.update();
+    }
+}
+
+// Global functions
+function refreshData() {
+    if (window.adminDashboard) {
+        window.adminDashboard.loadStats();
+        window.adminDashboard.loadChamados();
+    }
+}
+
+function exportData() {
+    // Implementar exportação de dados
+    alert('Funcionalidade de exportação será implementada em breve!');
+}
+
+function viewChamado(chamadoId) {
+    // Implementar visualização detalhada do chamado
+    alert(`Visualizar chamado: ${chamadoId}`);
+}
+
+function updateChamado(chamadoId) {
+    // Implementar edição do chamado
+    alert(`Editar chamado: ${chamadoId}`);
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.adminDashboard = new AdminDashboard();
+});
+</script>
+{% endblock %}
