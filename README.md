@@ -1,166 +1,316 @@
-# 🍔 ChatBot Hamburgueria - Integração Dialogflow + Streamlit
+# 🌐 FiapNet - Sistema de Suporte de Internet
 
 ## 📋 Descrição
 
-Este projeto implementa um chatbot para hamburgueria que utiliza **Google Cloud Dialogflow** como engine principal de NLP, com fallback para processamento local. O bot é executado no Streamlit e oferece funcionalidades completas de atendimento, pedidos e gerenciamento de cardápio.
+Sistema completo de chatbot para suporte de internet que utiliza **Google Cloud Dialogflow** como engine principal de NLP, integrado com **Telegram** e interface web profissional em **Flask**. O sistema oferece funcionalidades completas de atendimento, abertura de chamados, consulta de status e gerenciamento de intents/entidades.
 
 ## 🚀 Funcionalidades
 
-- **Integração com Dialogflow API** para processamento de linguagem natural
-- **Fallback local** quando Dialogflow não está disponível
-- **Gerenciamento de pedidos** com carrinho de compras
-- **Upload de cardápio** via CSV/Excel
-- **Interface web responsiva** com Streamlit
-- **Sistema de contexto** para conversas inteligentes
+### **Interface Web Profissional**
+- ✅ **Chat interativo** com interface moderna
+- ✅ **Dashboard administrativo** com estatísticas
+- ✅ **Gerenciador de Intents** - Criar, editar, visualizar intents
+- ✅ **Gerenciador de Entidades** - Gerenciar entidades do Dialogflow
+- ✅ **Sistema de status** de chamados
+- ✅ **FAQ integrado** com busca
+
+### **Integração Telegram**
+- ✅ **Bot Telegram** (@chat_fiap_bot) totalmente funcional
+- ✅ **Webhook configurado** para recebimento de mensagens
+- ✅ **Processamento automático** via Dialogflow
+- ✅ **Respostas personalizadas** para cada canal
+
+### **Sistema Dialogflow**
+- ✅ **15 Intents** configuradas para suporte de internet
+- ✅ **7 Entidades** personalizadas
+- ✅ **5 Fluxos principais** conforme requisitos da atividade
+- ✅ **Contextos e parâmetros** configurados
+- ✅ **Fallback inteligente** para casos não cobertos
+
+### **Fluxos de Atendimento**
+1. **Saudação e Identificação** - Captura nome e telefone
+2. **Abertura de Chamados** - Processo completo de abertura
+3. **Consulta de Status** - Verificação de chamados existentes
+4. **FAQ e Informações** - Planos, preços, horários
+5. **Encaminhamento Humano** - Transferência para atendente
 
 ## ⚙️ Configuração
 
-### 1. Dependências
+### **1. Dependências**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configuração do Google Cloud Dialogflow
+### **2. Configuração do Google Cloud Dialogflow**
 
-#### Para Desenvolvimento Local:
+#### **Para Desenvolvimento Local:**
 
-1. Crie um projeto no [Google Cloud Console](https://console.cloud.google.com/)
+1. Crie um projeto no Google Cloud Console
 2. Ative a API do Dialogflow
 3. Crie uma conta de serviço e baixe o arquivo JSON de credenciais
 4. Configure a variável de ambiente:
-   ```bash
-   export GOOGLE_APPLICATION_CREDENTIALS="caminho/para/suas/credenciais.json"
-   ```
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="caminho/para/suas/credenciais.json"
+```
 
-#### Para Streamlit Cloud:
+#### **Para Produção (VPS):**
 
-1. No painel do Streamlit Cloud, vá em **Settings > Secrets**
-2. Adicione as seguintes chaves:
-   ```toml
-   DIALOGFLOW_PROJECT_ID = "seu-project-id"
-   GOOGLE_APPLICATION_CREDENTIALS_JSON = '''
-   {
-     "type": "service_account",
-     "project_id": "seu-project-id",
-     "private_key_id": "...",
-     "private_key": "...",
-     "client_email": "...",
-     "client_id": "...",
-     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-     "token_uri": "https://oauth2.googleapis.com/token"
-   }
-   '''
-   ```
+1. Configure as variáveis de ambiente no servidor
+2. Coloque o arquivo de credenciais em local seguro
+3. Configure as variáveis do Telegram e webhook
 
-### 3. Configuração do Dialogflow
+### **3. Configuração do Telegram**
 
-Crie as seguintes intents no seu agent Dialogflow:
+1. Crie um bot com @BotFather no Telegram
+2. Configure o token:
+```bash
+export TELEGRAM_TOKEN="seu_token_do_bot"
+```
 
-#### **Intent: BoasVindas**
-- **Training Phrases**: "olá", "oi", "bom dia", "boa tarde"
-- **Response**: "Olá! Bem-vindo à nossa hamburgueria! Como posso ajudar?"
-
-#### **Intent: Cardapio**
-- **Training Phrases**: "cardápio", "menu", "o que vocês têm"
-- **Response**: "Temos hambúrgueres artesanais, bebidas e porções!"
-
-#### **Intent: FazerPedido**
-- **Training Phrases**: "quero um hambúrguer", "gostaria de pedir"
-- **Parameters**: 
-  - `item` (entity: @sys.any)
-  - `categoria` (entity: @sys.any)
-
-#### **Intent: Confirmar**
-- **Training Phrases**: "sim", "confirmar", "ok"
-
-#### **Intent: Negar**
-- **Training Phrases**: "não", "cancelar"
-
-#### **Intent: Despedida**
-- **Training Phrases**: "tchau", "obrigado", "até mais"
+3. Configure o webhook (para produção):
+```bash
+export WEBHOOK_URL="https://seu-dominio.com/telegram"
+```
 
 ## 🔧 Como Usar
 
-### Execução Local:
+### **Execução Local:**
+
 ```bash
-streamlit run bot_hamburgueria.py
+# Iniciar aplicação
+python app_web.py
+
+# Acessar interface web
+http://localhost:5023
+
+# Gerenciar intents
+http://localhost:5023/intent-manager
+
+# Gerenciar entidades
+http://localhost:5023/entity-manager
 ```
 
-### Deploy no Streamlit Cloud:
-1. Conecte seu repositório GitHub
-2. Configure as secrets (credenciais)
-3. Deploy automático
+### **Configuração do Telegram:**
+
+```bash
+# Ver informações do bot
+python telegram_setup.py info
+
+# Configurar webhook
+python telegram_setup.py setup
+
+# Testar webhook
+python telegram_setup.py test
+```
+
+### **Deploy em VPS:**
+
+```bash
+# Deploy automático (recomendado)
+curl -sSL https://raw.githubusercontent.com/alansms/chatboot_dialogflow/master/AULAS/2-SEMESTRE/LNP/deploy_vps.sh | bash
+
+# Ou deploy manual
+chmod +x deploy.sh
+./deploy.sh
+```
 
 ## 📁 Estrutura do Projeto
 
 ```
-├── bot_hamburgueria.py          # Aplicação principal
-├── requirements.txt             # Dependências Python
-├── exemplo_dialogflow_api.py    # Exemplo de implementação
-├── .gitignore                   # Arquivos ignorados pelo Git
-├── README.md                    # Documentação
-└── AULAS/2-SEMESTRE/LNP/        # Arquivos do projeto LNP
-    ├── entities_hamburgueria.json
-    ├── intents_hamburgueria.json
-    └── ...
+├── AULAS/2-SEMESTRE/LNP/        # Projeto principal FiapNet
+│   ├── app_web.py               # Aplicação principal Flask
+│   ├── requirements.txt         # Dependências Python
+│   ├── deploy_vps.sh           # Script de deploy para VPS
+│   ├── telegram_setup.py       # Configuração do Telegram
+│   ├── test_telegram_local.py  # Testes locais
+│   ├── start_with_ngrok.sh     # Script para desenvolvimento
+│   ├── config_example.env      # Exemplo de configuração
+│   ├── templates/              # Templates HTML
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   ├── chat.html
+│   │   ├── status.html
+│   │   ├── faq.html
+│   │   ├── admin.html
+│   │   ├── intent_manager.html
+│   │   └── entity_manager.html
+│   ├── static/                 # Arquivos estáticos
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   ├── js/
+│   │   │   └── app.js
+│   │   └── images/
+│   ├── fiap-boot-a239f7750ffc.json  # Credenciais Dialogflow
+│   └── documentação/
+│       ├── GERENCIADOR_INTENTS.md
+│       ├── INTEGRACAO_TELEGRAM.md
+│       ├── CONFIGURACAO_RAPIDA.md
+│       ├── CONFIGURACAO_FINAL.md
+│       ├── DEPLOY_GUIDE.md
+│       └── COMANDOS_VPS.md
+└── README.md                   # Este arquivo
 ```
 
 ## 🛠️ Arquitetura
 
-### Fluxo de Processamento:
+### **Fluxo de Processamento:**
 
-1. **Input do usuário** → Streamlit
-2. **Dialogflow API** → Detecção de intenção (confiança > 60%)
-3. **Processamento local** → Fallback se Dialogflow falhar
-4. **Resposta personalizada** → Baseada na intenção detectada
-5. **Atualização do contexto** → Para conversas contínuas
+1. **Input do usuário** → Interface Web ou Telegram
+2. **Dialogflow API** → Detecção de intenção
+3. **Processamento de parâmetros** → Extração de dados
+4. **Geração de resposta** → Baseada na intenção
+5. **Envio da resposta** → Canal de origem
 
-### Classes Principais:
+### **APIs Disponíveis:**
 
-- **`DialogflowBot`**: Gerencia comunicação com API
-- **`processar_mensagem()`**: Coordena Dialogflow + fallback local
-- **Funções auxiliares**: Processamento específico por intenção
+- `GET /` - Interface principal
+- `GET /chat` - Interface de chat
+- `GET /intent-manager` - Gerenciador de intents
+- `GET /entity-manager` - Gerenciador de entidades
+- `GET /admin` - Dashboard administrativo
+- `POST /telegram` - Webhook do Telegram
+- `POST /dialogflow` - Webhook do Dialogflow
+- `GET /api/intents` - API de intents
+- `GET /api/entities` - API de entidades
 
-## 📊 Monitoramento
+## 📊 Intents Configuradas
 
-O sistema fornece informações em tempo real:
+### **Saudação e Identificação:**
+- `Saudacao_Identificacao` - Saudação inicial
+- `Capturar_Nome` - Captura do nome do cliente
+- `Capturar_Telefone` - Captura do telefone
 
-- Status da conexão com Dialogflow
-- Confiança das detecções de intenção
-- Fallback para processamento local
-- Logs de erro para debugging
+### **Abertura de Chamados:**
+- `Abrir_Chamado` - Início do processo
+- `Definir_Tipo_Problema` - Tipo do problema
+- `Definir_Urgencia` - Nível de urgência
+- `Finalizar_Chamado` - Confirmação e fechamento
+
+### **Consulta de Status:**
+- `Consultar_Status` - Consulta de chamados
+- `Buscar_Chamado` - Busca específica
+
+### **FAQ e Informações:**
+- `FAQ_Informacoes` - Informações gerais
+- `Horario_Funcionamento` - Horários de atendimento
+- `Planos_Precos` - Planos e preços
+- `Solucoes_Rapidas` - Soluções rápidas
+
+### **Suporte e Encerramento:**
+- `Encaminhar_Humano` - Transferência para atendente
+- `Encerramento` - Encerramento de atendimento
+
+## 🏷️ Entidades Configuradas
+
+- `TipoProblema` - Tipos de problemas técnicos
+- `UrgenciaChamado` - Níveis de urgência
+- `StatusChamado` - Status de chamados
+- `PlanoInternet` - Planos de internet
+
+## 🚀 Deploy em VPS
+
+### **Deploy Automático (Recomendado):**
+
+```bash
+# 1. Conectar na VPS
+ssh root@seu-ip-da-vps
+
+# 2. Executar deploy automático
+curl -sSL https://raw.githubusercontent.com/alansms/chatboot_dialogflow/master/AULAS/2-SEMESTRE/LNP/deploy_vps.sh | bash
+
+# 3. Configurar aplicação
+cd /home/usuario/fiapnet/AULAS/2-SEMESTRE/LNP
+./configure.sh
+```
+
+### **Requisitos do Servidor:**
+- Ubuntu 20.04+ ou similar
+- Python 3.8+
+- Nginx
+- SSL Certificate (Let's Encrypt)
+
+### **Processo de Deploy Manual:**
+
+1. **Clone o repositório:**
+```bash
+git clone https://github.com/alansms/chatboot_dialogflow.git
+cd chatboot_dialogflow/AULAS/2-SEMESTRE/LNP
+```
+
+2. **Execute o script de deploy:**
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+3. **Configure as variáveis de ambiente:**
+```bash
+export TELEGRAM_TOKEN="seu_token"
+export WEBHOOK_URL="https://seu-dominio.com/telegram"
+```
+
+4. **Configure o webhook do Telegram:**
+```bash
+python telegram_setup.py setup
+```
 
 ## 🔒 Segurança
 
-- Credenciais protegidas via Streamlit Secrets
-- Arquivo `.gitignore` configurado para evitar vazamentos
+- Credenciais protegidas via variáveis de ambiente
+- Arquivo `.gitignore` configurado
 - Validação de entrada e tratamento de erros
+- HTTPS obrigatório para produção
+- Firewall configurado no deploy
+
+## 📈 Monitoramento
+
+O sistema fornece:
+
+- Health check endpoint (`/health`)
+- Estatísticas em tempo real (`/stats`)
+- Logs detalhados de todas as operações
+- Monitoramento de performance
 
 ## 🚨 Troubleshooting
 
-### Erro de Credenciais:
+### **Erro de Credenciais:**
 ```
-⚠️ Credenciais do Dialogflow não configuradas. Usando processamento local.
+⚠️ Credenciais do Dialogflow não configuradas
 ```
-**Solução**: Verifique se as credenciais estão configuradas corretamente.
+**Solução:** Verifique se as credenciais estão configuradas corretamente.
 
-### Baixa Confiança:
-Se Dialogflow retorna confiança < 60%, o sistema usa processamento local automaticamente.
-
-### Erro de API:
+### **Erro de Webhook:**
 ```
-Erro na comunicação com Dialogflow: [detalhes]
+❌ Erro ao configurar webhook
 ```
-**Solução**: Verifique conectividade e cotas da API.
+**Solução:** Verifique se a URL é acessível publicamente.
 
-## 📈 Melhorias Futuras
+### **Erro de Telegram:**
+```
+❌ TELEGRAM_TOKEN não encontrado
+```
+**Solução:** Configure a variável de ambiente com o token correto.
 
-- [ ] Webhook para fulfillment personalizado
-- [ ] Integração com sistemas de pagamento
-- [ ] Analytics de conversação
-- [ ] Suporte multilíngue
-- [ ] Interface de administração avançada
+## 🎯 Funcionalidades Avançadas
+
+### **Gerenciador de Intents:**
+- Criação de novas intents via interface
+- Edição de intents existentes
+- Importação/exportação de intents
+- Visualização de estatísticas
+
+### **Gerenciador de Entidades:**
+- Criação de entidades personalizadas
+- Configuração de valores e sinônimos
+- Categorização automática
+- Testes de funcionamento
+
+### **Sistema de Chamados:**
+- Abertura automática de chamados
+- Numeração sequencial
+- Status em tempo real
+- Histórico completo
 
 ## 🤝 Contribuição
 
@@ -174,6 +324,43 @@ Erro na comunicação com Dialogflow: [detalhes]
 
 Este projeto é desenvolvido para fins educacionais na FIAP.
 
+## 🎉 Status do Projeto
+
+**✅ COMPLETO E FUNCIONAL**
+
+- Interface Web: ✅ Funcionando
+- Telegram Bot: ✅ Funcionando (@chat_fiap_bot)
+- Dialogflow: ✅ Integrado
+- Gerenciador de Intents: ✅ Funcionando
+- Gerenciador de Entidades: ✅ Funcionando
+- Deploy VPS: ✅ Scripts prontos
+- Documentação: ✅ Completa
+
+## 🌐 URLs Importantes
+
+Após o deploy, você terá acesso a:
+
+- **Interface Web:** `https://seu-dominio.com`
+- **Chat:** `https://seu-dominio.com/chat`
+- **Admin:** `https://seu-dominio.com/admin`
+- **Gerenciar Intents:** `https://seu-dominio.com/intent-manager`
+- **Gerenciar Entidades:** `https://seu-dominio.com/entity-manager`
+- **Webhook Telegram:** `https://seu-dominio.com/telegram`
+- **Webhook Dialogflow:** `https://seu-dominio.com/dialogflow`
+- **Health Check:** `https://seu-dominio.com/health`
+
+## 📱 Bot Telegram
+
+**@chat_fiap_bot** - Bot totalmente funcional para suporte de internet
+
+### **Comandos do Bot:**
+- `/start` - Iniciar atendimento
+- `/help` - Ajuda e informações
+- `/status` - Consultar status de chamados
+- `/suporte` - Falar com atendente humano
+
 ---
 
-**Desenvolvido com ❤️ usando Streamlit + Google Cloud Dialogflow**
+**Desenvolvido com ❤️ usando Flask + Google Cloud Dialogflow + Telegram**
+
+**FiapNet - Conectando você ao futuro! 🌐**
